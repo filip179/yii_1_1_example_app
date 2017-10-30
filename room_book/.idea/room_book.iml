@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/yii/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/yii/vendor/phing/phing" />
+      <excludeFolder url="file://$MODULE_DIR$/yii/vendor/phpunit/php-code-coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/yii/vendor/phpunit/php-file-iterator" />
+      <excludeFolder url="file://$MODULE_DIR$/yii/vendor/phpunit/php-text-template" />
+      <excludeFolder url="file://$MODULE_DIR$/yii/vendor/phpunit/php-timer" />
+      <excludeFolder url="file://$MODULE_DIR$/yii/vendor/phpunit/php-token-stream" />
+      <excludeFolder url="file://$MODULE_DIR$/yii/vendor/phpunit/phpunit" />
+      <excludeFolder url="file://$MODULE_DIR$/yii/vendor/phpunit/phpunit-mock-objects" />
+      <excludeFolder url="file://$MODULE_DIR$/yii/vendor/phpunit/phpunit-selenium" />
+      <excludeFolder url="file://$MODULE_DIR$/yii/vendor/sebastian/comparator" />
+      <excludeFolder url="file://$MODULE_DIR$/yii/vendor/sebastian/diff" />
+      <excludeFolder url="file://$MODULE_DIR$/yii/vendor/sebastian/exporter" />
+      <excludeFolder url="file://$MODULE_DIR$/yii/vendor/sebastian/recursion-context" />
+      <excludeFolder url="file://$MODULE_DIR$/yii/vendor/symfony/yaml" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="PHARS">
+        <CLASSES>
+          <root url="phar://$MODULE_DIR$/yii/composer.phar/" />
+        </CLASSES>
+        <SOURCES>
+          <root url="phar://$MODULE_DIR$/yii/composer.phar/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+  </component>
+</module>

@@ -1,0 +1,116 @@
+-- phpMyAdmin SQL Dump
+-- version 4.6.5.2
+-- https://www.phpmyadmin.net/
+--
+-- Host: localhost
+-- Czas generowania: 10 Cze 2017, 23:33
+-- Wersja serwera: 10.1.21-MariaDB-cll-lve
+-- Wersja PHP: 5.6.30
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+--
+-- Baza danych: `aporeali_roombook`
+--
+CREATE DATABASE IF NOT EXISTS `aporeali_roombook` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `aporeali_roombook`;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `equipment`
+--
+
+CREATE TABLE IF NOT EXISTS `equipment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `roomid` int(11) NOT NULL,
+  `codename` varchar(25) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+--
+-- Zrzut danych tabeli `equipment`
+--
+
+INSERT INTO `equipment` (`id`, `roomid`, `codename`, `name`) VALUES
+(1, 1, 'ASDF1', 'ASDF'),
+(2, 1, 'IKEA_table_1', 'Table'),
+(3, 1, 'DECATHLON_tenistable_1', 'Tennis table');
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `events`
+--
+
+CREATE TABLE IF NOT EXISTS `events` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `begin` datetime NOT NULL,
+  `end` datetime NOT NULL,
+  `userid` int(11) NOT NULL,
+  `roomid` int(11) NOT NULL,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `userid` (`userid`),
+  KEY `roomid` (`roomid`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+
+--
+-- Zrzut danych tabeli `events`
+--
+
+INSERT INTO `events` (`id`, `begin`, `end`, `userid`, `roomid`, `created`, `name`) VALUES
+(1, '2017-06-10 12:00:00', '2017-06-10 15:00:00', 3, 1, '2017-06-10 00:18:03', 'Spotkanie projektowe'),
+(2, '2017-06-11 12:00:00', '2017-06-11 12:30:00', 3, 1, '2017-06-10 01:32:10', 'Staff meeting'),
+(3, '2017-06-16 10:00:00', '2017-06-16 11:00:00', 3, 1, '2017-06-10 22:20:47', 'Just booking'),
+(4, '2017-06-10 22:40:00', '2017-06-10 22:55:00', 3, 1, '2017-06-10 22:42:30', 'asfghnm');
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `rooms`
+--
+
+CREATE TABLE IF NOT EXISTS `rooms` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `capacity` int(11) NOT NULL,
+  `multimedia` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+--
+-- Zrzut danych tabeli `rooms`
+--
+
+INSERT INTO `rooms` (`id`, `name`, `capacity`, `multimedia`) VALUES
+(1, 'Konferencyjna', 40, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `users`
+--
+
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `password` varchar(120) NOT NULL,
+  `email` varchar(30) NOT NULL,
+  `type` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+
+--
+-- Zrzut danych tabeli `users`
+--
+
+INSERT INTO `users` (`id`, `password`, `email`, `type`) VALUES
+(2, '$2y$13$ViF/cyJMwVMeAs3uGJbCDeF3uJecnHp4TbiZcx1DTr2um1E/rpysu', 'demo1', 0),
+(3, '$2y$13$zL8sO8jKX8bctnuIWZV1NehnlHjRGN0bXq6xrNiWq0ANDgm.vMgvq', 'admin', 1),
+(4, '$2y$13$NT5FrnMjkPNSpCJxqCxuSOB6JUYaVk5wAo3HHSQhu0h01A5wQ1ri.', 'demo', 0),
+(5, '$2y$13$7lCqElqyjPlwQULnYFPjrOKVgmTI65yFnl8.LvACiit3GcYEFqV0m', 'user1', 0),
+(6, '$2y$13$KJAODt/M4le4UOpkEq99yubPQ2OeqP5GdaHnvM22Ffl6QTPCjGuqi', 'user2', 0);

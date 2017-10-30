@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="68e99ade-6bf8-4397-b76c-f15f5c6e5db5" name="apo-reality" url="http://s22.zenbox.pl">
+        <fileTransfer host="s22.zenbox.pl" port="21" rootFolder="/public_html/roombook">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="21" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
