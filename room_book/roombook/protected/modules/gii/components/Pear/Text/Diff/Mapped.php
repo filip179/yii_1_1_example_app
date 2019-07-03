@@ -1,4 +1,5 @@
 <?php
+
 /**
  * $Horde: framework/Text_Diff/Diff/Mapped.php,v 1.3.2.4 2009/01/06 15:23:41 jan Exp $
  *
@@ -10,7 +11,8 @@
  * @package Text_Diff
  * @author  Geoffrey T. Dairiki <dairiki@dairiki.org>
  */
-class Text_Diff_Mapped extends Text_Diff {
+class Text_Diff_Mapped extends Text_Diff
+{
 
     /**
      * Computes a diff between sequences of strings.
@@ -18,18 +20,18 @@ class Text_Diff_Mapped extends Text_Diff {
      * This can be used to compute things like case-insensitve diffs, or diffs
      * which ignore changes in white-space.
      *
-     * @param array $from_lines         An array of strings.
-     * @param array $to_lines           An array of strings.
-     * @param array $mapped_from_lines  This array should have the same size
+     * @param array $from_lines An array of strings.
+     * @param array $to_lines An array of strings.
+     * @param array $mapped_from_lines This array should have the same size
      *                                  number of elements as $from_lines.  The
      *                                  elements in $mapped_from_lines and
      *                                  $mapped_to_lines are what is actually
      *                                  compared when computing the diff.
-     * @param array $mapped_to_lines    This array should have the same number
+     * @param array $mapped_to_lines This array should have the same number
      *                                  of elements as $to_lines.
      */
     function __construct($from_lines, $to_lines,
-                              $mapped_from_lines, $mapped_to_lines)
+                         $mapped_from_lines, $mapped_to_lines)
     {
         assert(count($from_lines) == count($mapped_from_lines));
         assert(count($to_lines) == count($mapped_to_lines));

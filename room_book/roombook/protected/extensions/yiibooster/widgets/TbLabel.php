@@ -16,76 +16,76 @@
  */
 class TbLabel extends CWidget
 {
-	const TYPE_SUCCESS = 'success';
-	const TYPE_WARNING = 'warning';
-	const TYPE_IMPORTANT = 'important';
-	const TYPE_INFO = 'info';
-	const TYPE_INVERSE = 'inverse';
+    const TYPE_SUCCESS = 'success';
+    const TYPE_WARNING = 'warning';
+    const TYPE_IMPORTANT = 'important';
+    const TYPE_INFO = 'info';
+    const TYPE_INVERSE = 'inverse';
 
-	/**
-	 * @var string the label type.
-	 *
+    /**
+     * @var string the label type.
+     *
      * See `TYPE_*` constants for list of allowed types.
-	 */
-	public $type;
+     */
+    public $type;
 
-	/**
-	 * @var string the label text.
-	 */
-	public $label;
+    /**
+     * @var string the label text.
+     */
+    public $label;
 
-	/**
-	 * @var boolean whether to encode the label.
-	 */
-	public $encodeLabel = true;
+    /**
+     * @var boolean whether to encode the label.
+     */
+    public $encodeLabel = true;
 
-	/**
-	 * @var array the HTML attributes for the widget container.
-	 */
-	public $htmlOptions = array();
+    /**
+     * @var array the HTML attributes for the widget container.
+     */
+    public $htmlOptions = array();
 
-	/**
-	 *### .init()
-	 *
+    /**
+     *### .init()
+     *
      * At the start of widget we collect the attributes for badge tag.
-	 */
-	public function init()
-	{
-		$classes = array('label');
+     */
+    public function init()
+    {
+        $classes = array('label');
 
-		$validTypes = array(
-			self::TYPE_SUCCESS,
-			self::TYPE_WARNING,
-			self::TYPE_IMPORTANT,
-			self::TYPE_INFO,
-			self::TYPE_INVERSE
-		);
+        $validTypes = array(
+            self::TYPE_SUCCESS,
+            self::TYPE_WARNING,
+            self::TYPE_IMPORTANT,
+            self::TYPE_INFO,
+            self::TYPE_INVERSE
+        );
 
-		if (isset($this->type) && in_array($this->type, $validTypes)) {
-			$classes[] = 'label-' . $this->type;
-		}
+        if (isset($this->type) && in_array($this->type, $validTypes)) {
+            $classes[] = 'label-' . $this->type;
+        }
 
-		if (!empty($classes)) {
-			$classes = implode(' ', $classes);
-			if (isset($this->htmlOptions['class'])) {
-				$this->htmlOptions['class'] .= ' ' . $classes;
-			} else {
-				$this->htmlOptions['class'] = $classes;
-			}
-		}
+        if (!empty($classes)) {
+            $classes = implode(' ', $classes);
+            if (isset($this->htmlOptions['class'])) {
+                $this->htmlOptions['class'] .= ' ' . $classes;
+            } else {
+                $this->htmlOptions['class'] = $classes;
+            }
+        }
 
-		if ($this->encodeLabel === true) {
-			$this->label = CHtml::encode($this->label);
-		}
-	}
+        if ($this->encodeLabel === true) {
+            $this->label = CHtml::encode($this->label);
+        }
+    }
 
-	/**
-	 *### .run()
-	 *
+    /**
+     *### .run()
+     *
      * Upon completing the badge we write the span tag with collected attributes to document.
-	 */
-	public function run()
-	{
-		echo CHtml::tag('span', $this->htmlOptions, $this->label);
-	}
+     */
+    public function run()
+    {
+        echo CHtml::tag('span', $this->htmlOptions, $this->label);
+    }
 }

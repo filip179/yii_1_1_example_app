@@ -311,123 +311,31 @@ class TbEditable extends CWidget
     }
 
     /**
-     * @return bool
+     *
      */
-    public function getPrepareToAutoText()
+    public function run()
     {
-        return $this->_prepareToAutoText;
-    }
-
-    /**
-     * @param bool $value
-     */
-    protected function setPrepareToAutoText($value)
-    {
-        $this->_prepareToAutoText = $value;
-    }
-
-    public function getClientScript($unique = true)
-    {
-    	$selector = $this->getSelector($unique);
-        // target the specific field if parent ID is specified
-        $rel = $unique ? "rel=$selector" : "rel^=$selector";
-        if ($this->parentid) {
-            $script = "$('#{$this->parentid} a[$rel]')";
+        if ($this->apply === false) {
+            $this->renderText();
         } else {
-            $script = "$('a[$rel]')";
+            $this->buildHtmlOptions();
+            $this->buildJsOptions();
+            $this->registerAssets();
+            $this->registerClientScript();
+            $this->renderLink();
         }
-
-        //attach events
-        foreach (array('init', 'shown', 'save', 'hidden') as $event) {
-            $eventName = 'on' . ucfirst($event);
-            if (isset($this->$eventName)) {
-                // CJavaScriptExpression appeared only in 1.1.11, will turn to it later
-                //$event = ($this->onInit instanceof CJavaScriptExpression) ? $this->onInit : new CJavaScriptExpression($this->onInit);
-                $eventJs = (strpos($this->$eventName, 'js:') !== 0 ? 'js:' : '') . $this->$eventName;
-                $script .= "\n.on('" . $event . "', " . CJavaScript::encode($eventJs) . ")";
-            }
-        }
-
-        //apply editable
-        $options = CJavaScript::encode($this->options);
-        $script .= ".editable($options);";
-
-        return $script;
-    }
-    
-    public function registerClientScript($unique = true)
-    {
-        $script = $this->getClientScript($unique);
-
-        // unique script ID depending on the parent
-        if ($this->parentid) {
-            Yii::app()->getClientScript()->registerScript(
-                __CLASS__ . '#' . $this->parentid . '-' . $this->id,
-                $script
-            );
-        } else {
-            Yii::app()->getClientScript()->registerScript(__CLASS__ . '#' . $this->id, $script);
-        }
-
-        return $script;
     }
 
     /**
      *
      */
-    protected function setDataPk()
+    public function renderText()
     {
-        //set data-pk only for existing records
-        if ($this->pk !== null) {
-            $this->htmlOptions = CMap::mergeArray($this->htmlOptions, array(
-                'data-pk' => is_array($this->pk) ? CJSON::encode($this->pk) : $this->pk
-            ));
+        $encodedText = $this->encode ? CHtml::encode($this->text) : $this->text;
+        if ($this->type == 'textarea') {
+            $encodedText = preg_replace('/\r?\n/', '<br>', $encodedText);
         }
-    }
-
-    /**
-     * @return string
-     */
-    public function getSelector($unique = true)
-    {
-        $pk = $this->pk;
-        if($pk === null) {
-            $pk = 'new';
-        } else {
-            //support of composite keys: convert to string: e.g. 'id-1_lang-ru'
-            if(is_array($pk)) {
-                //below not works in PHP < 5.3, see https://github.com/vitalets/x-editable-yii/issues/39
-                //$pk = join('_', array_map(function($k, $v) { return $k.'-'.$v; }, array_keys($pk), $pk));
-                $buffer = array();
-                foreach($pk as $k => $v) {
-                    $buffer[] = $k.'-'.$v;
-                }
-                $pk = join('_', $buffer);
-            }
-        }
-        return $unique ? $this->name.'_'.$pk : $this->name;
-    }
-
-    /**
-     *
-     */
-    protected function generateTitle()
-    {
-        if ($this->title === null) {
-            $titles = array(
-                'Select' => array('select', 'date'),
-                'Check' => array('checklist')
-            );
-            $title = Yii::t('TbEditable.editable', 'Enter');
-            foreach ($titles as $t => $types) {
-                if (in_array($this->type, $types)) {
-                    $title = Yii::t('TbEditable.editable', $t);
-                }
-            }
-            $this->title = $title . ' ' . $this->value;
-        } else {
-            $this->title = strtr($this->title, array('{label}' => $this->value));
-        }
+        echo $encodedText;
     }
 
     public function buildHtmlOptions()
@@ -470,6 +378,58 @@ class TbEditable extends CWidget
         $this->setDataPk();
     }
 
+    /**
+     * @return string
+     */
+    public function getSelector($unique = true)
+    {
+        $pk = $this->pk;
+        if ($pk === null) {
+            $pk = 'new';
+        } else {
+            //support of composite keys: convert to string: e.g. 'id-1_lang-ru'
+            if (is_array($pk)) {
+                //below not works in PHP < 5.3, see https://github.com/vitalets/x-editable-yii/issues/39
+                //$pk = join('_', array_map(function($k, $v) { return $k.'-'.$v; }, array_keys($pk), $pk));
+                $buffer = array();
+                foreach ($pk as $k => $v) {
+                    $buffer[] = $k . '-' . $v;
+                }
+                $pk = join('_', $buffer);
+            }
+        }
+        return $unique ? $this->name . '_' . $pk : $this->name;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getPrepareToAutoText()
+    {
+        return $this->_prepareToAutoText;
+    }
+
+    /**
+     * @param bool $value
+     */
+    protected function setPrepareToAutoText($value)
+    {
+        $this->_prepareToAutoText = $value;
+    }
+
+    /**
+     *
+     */
+    protected function setDataPk()
+    {
+        //set data-pk only for existing records
+        if ($this->pk !== null) {
+            $this->htmlOptions = CMap::mergeArray($this->htmlOptions, array(
+                'data-pk' => is_array($this->pk) ? CJSON::encode($this->pk) : $this->pk
+            ));
+        }
+    }
+
     public function buildJsOptions()
     {
         $this->url = CHtml::normalizeUrl($this->url);
@@ -498,14 +458,14 @@ class TbEditable extends CWidget
             //if source is array --> convert it to x-editable format.
             //Since 1.1.0 source as array with one element is NOT treated as Yii route!
             if (is_array($this->source)) { // array
-            	$this->htmlOptions['data-source'] = $this->prepareArray($this->source);
-            	unset($options['source']);  
-            } elseif (is_callable($this->source)) { // function that return an array 
-            	$array = $this->evaluateExpression($this->source, array('model'=>$this->model));
-            	if(!is_array($array))
-            		throw new CException('Parameter "source" function must return and array');
-            	$this->htmlOptions['data-source'] = $this->prepareArray($array);
-            	unset($options['source']);
+                $this->htmlOptions['data-source'] = $this->prepareArray($this->source);
+                unset($options['source']);
+            } elseif (is_callable($this->source)) { // function that return an array
+                $array = $this->evaluateExpression($this->source, array('model' => $this->model));
+                if (!is_array($array))
+                    throw new CException('Parameter "source" function must return and array');
+                $this->htmlOptions['data-source'] = $this->prepareArray($array);
+                unset($options['source']);
             } else { //source is url
                 $options['source'] = $this->source;
             }
@@ -527,22 +487,44 @@ class TbEditable extends CWidget
     }
 
     /**
-     * 
+     *
+     */
+    protected function generateTitle()
+    {
+        if ($this->title === null) {
+            $titles = array(
+                'Select' => array('select', 'date'),
+                'Check' => array('checklist')
+            );
+            $title = Yii::t('TbEditable.editable', 'Enter');
+            foreach ($titles as $t => $types) {
+                if (in_array($this->type, $types)) {
+                    $title = Yii::t('TbEditable.editable', $t);
+                }
+            }
+            $this->title = $title . ' ' . $this->value;
+        } else {
+            $this->title = strtr($this->title, array('{label}' => $this->value));
+        }
+    }
+
+    /**
+     *
      */
     private function prepareArray($array)
     {
-    	$ret = array();
-    	if (isset($array[0]) && is_array($array[0])) { //if first elem is array assume it's normal x-editable format, so just pass it
-    		$ret = $array;
-    	} else { //else convert to x-editable source format {value: 1, text: 'abc'}
-    		$ret = array();
-    		foreach ($array as $value => $text) {
-    			$ret[] = array('value' => $value, 'text' => $text);
-    		}
-    	}
-    	return json_encode($ret);
+        $ret = array();
+        if (isset($array[0]) && is_array($array[0])) { //if first elem is array assume it's normal x-editable format, so just pass it
+            $ret = $array;
+        } else { //else convert to x-editable source format {value: 1, text: 'abc'}
+            $ret = array();
+            foreach ($array as $value => $text) {
+                $ret[] = array('value' => $value, 'text' => $text);
+            }
+        }
+        return json_encode($ret);
     }
-    
+
     /**
      *
      */
@@ -559,8 +541,7 @@ class TbEditable extends CWidget
                 array('options' => $this->options['datepicker'])
             );
             $widget->registerLanguageScript();
-        }
-        elseif ($this->type == 'datetime') {
+        } elseif ($this->type == 'datetime') {
             $booster->registerPackage('datetimepicker');
 
             /** @var $widget TbDateTimePicker */
@@ -580,20 +561,50 @@ class TbEditable extends CWidget
         }
     }
 
-    /**
-     *
-     */
-    public function run()
+    public function registerClientScript($unique = true)
     {
-        if ($this->apply === false) {
-            $this->renderText();
+        $script = $this->getClientScript($unique);
+
+        // unique script ID depending on the parent
+        if ($this->parentid) {
+            Yii::app()->getClientScript()->registerScript(
+                __CLASS__ . '#' . $this->parentid . '-' . $this->id,
+                $script
+            );
         } else {
-            $this->buildHtmlOptions();
-            $this->buildJsOptions();
-            $this->registerAssets();
-            $this->registerClientScript();
-            $this->renderLink();
+            Yii::app()->getClientScript()->registerScript(__CLASS__ . '#' . $this->id, $script);
         }
+
+        return $script;
+    }
+
+    public function getClientScript($unique = true)
+    {
+        $selector = $this->getSelector($unique);
+        // target the specific field if parent ID is specified
+        $rel = $unique ? "rel=$selector" : "rel^=$selector";
+        if ($this->parentid) {
+            $script = "$('#{$this->parentid} a[$rel]')";
+        } else {
+            $script = "$('a[$rel]')";
+        }
+
+        //attach events
+        foreach (array('init', 'shown', 'save', 'hidden') as $event) {
+            $eventName = 'on' . ucfirst($event);
+            if (isset($this->$eventName)) {
+                // CJavaScriptExpression appeared only in 1.1.11, will turn to it later
+                //$event = ($this->onInit instanceof CJavaScriptExpression) ? $this->onInit : new CJavaScriptExpression($this->onInit);
+                $eventJs = (strpos($this->$eventName, 'js:') !== 0 ? 'js:' : '') . $this->$eventName;
+                $script .= "\n.on('" . $event . "', " . CJavaScript::encode($eventJs) . ")";
+            }
+        }
+
+        //apply editable
+        $options = CJavaScript::encode($this->options);
+        $script .= ".editable($options);";
+
+        return $script;
     }
 
     /**
@@ -604,17 +615,5 @@ class TbEditable extends CWidget
         echo CHtml::openTag('a', $this->htmlOptions);
         $this->renderText();
         echo CHtml::closeTag('a');
-    }
-
-    /**
-     *
-     */
-    public function renderText()
-    {
-        $encodedText = $this->encode ? CHtml::encode($this->text) : $this->text;
-        if ($this->type == 'textarea') {
-            $encodedText = preg_replace('/\r?\n/', '<br>', $encodedText);
-        }
-        echo $encodedText;
     }
 } 

@@ -29,7 +29,7 @@ $this->widget(
 );
 
 
-    echo CHtml::linkButton('Create Event', array(
-        'class' => 'btn btn-success',
-        'href' => Yii::app()->createAbsoluteUrl('/events/create')
-    ));
+echo CHtml::linkButton('Create Event', array(
+    'class' => 'btn btn-success',
+    'href' => Yii::app()->createAbsoluteUrl('/events/create')
+));

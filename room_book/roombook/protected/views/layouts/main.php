@@ -10,7 +10,7 @@
 
 <body style="margin-top:30px;">
 
-<div class="col-md-2 col-xs-12" >
+<div class="col-md-2 col-xs-12">
 
     <?php $this->widget(
         'bootstrap.widgets.TbMenu',

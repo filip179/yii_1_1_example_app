@@ -34,7 +34,7 @@ class AuthFilter extends CFilter
 
         if (($module = $controller->getModule()) !== null) {
             $itemName .= $module->getId() . '.';
-			//$itemName .= str_replace('/','.',$module->getId()) . '.';
+            //$itemName .= str_replace('/','.',$module->getId()) . '.';
             if ($user->checkAccess($itemName . '*')) {
                 return true;
             }

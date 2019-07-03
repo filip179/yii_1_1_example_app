@@ -19,16 +19,16 @@ class AssignmentController extends AuthController
     {
 
         // $dataProvider = new CActiveDataProvider($this->module->userClass);
-		
-		$model = new $this->module->userClass('search');
-		$model->unsetAttributes();  // clear any default values
-		if (isset($_GET[$this->module->userClass])) $model->attributes=$_GET[$this->module->userClass];
+
+        $model = new $this->module->userClass('search');
+        $model->unsetAttributes();  // clear any default values
+        if (isset($_GET[$this->module->userClass])) $model->attributes = $_GET[$this->module->userClass];
 
         $this->render(
             'index',
             array(
-               // 'dataProvider' => $dataProvider
-				'model' => $model
+                // 'dataProvider' => $dataProvider
+                'model' => $model
             )
         );
     }
@@ -55,7 +55,7 @@ class AssignmentController extends AuthController
 
                     if ($am instanceof ICachedAuthManager) {
                         $am->flushAccess($formModel->items, $id);
-						Yii::log('flush cache '.$formModel->items.' dla id '.$id, 'Info', 'custom');
+                        Yii::log('flush cache ' . $formModel->items . ' dla id ' . $id, 'Info', 'custom');
                     }
                 }
             }
@@ -88,39 +88,6 @@ class AssignmentController extends AuthController
     }
 
     /**
-     * Revokes an assignment from the given user.
-     * @throws CHttpException if the request is invalid.
-     */
-    public function actionRevoke()
-    {
-        if (isset($_GET['itemName'], $_GET['userId'])) {
-            $itemName = $_GET['itemName'];
-            $userId = $_GET['userId'];
-
-            /* @var $am CAuthManager|AuthBehavior */
-            $am = Yii::app()->getAuthManager();
-
-            if ($am->isAssigned($itemName, $userId)) {
-                $am->revoke($itemName, $userId);
-                if ($am instanceof CPhpAuthManager) {
-                    $am->save();
-                }
-
-                if ($am instanceof ICachedAuthManager) {
-                    $am->flushAccess($itemName, $userId);
-					Yii::log('flush cache '.$itemName.' dla id '.$userId, 'Info', 'custom');
-                }
-            }
-
-            if (!isset($_POST['ajax'])) {
-                $this->redirect(array('view', 'id' => $userId));
-            }
-        } else {
-            throw new CHttpException(400, Yii::t('AuthModule.main', 'Invalid request.'));
-        }
-    }
-
-    /**
      * Returns a list of possible assignments for the user with the given id.
      * @param string $userId the user id.
      * @return array the assignment options.
@@ -144,5 +111,38 @@ class AssignmentController extends AuthController
         }
 
         return $options;
+    }
+
+    /**
+     * Revokes an assignment from the given user.
+     * @throws CHttpException if the request is invalid.
+     */
+    public function actionRevoke()
+    {
+        if (isset($_GET['itemName'], $_GET['userId'])) {
+            $itemName = $_GET['itemName'];
+            $userId = $_GET['userId'];
+
+            /* @var $am CAuthManager|AuthBehavior */
+            $am = Yii::app()->getAuthManager();
+
+            if ($am->isAssigned($itemName, $userId)) {
+                $am->revoke($itemName, $userId);
+                if ($am instanceof CPhpAuthManager) {
+                    $am->save();
+                }
+
+                if ($am instanceof ICachedAuthManager) {
+                    $am->flushAccess($itemName, $userId);
+                    Yii::log('flush cache ' . $itemName . ' dla id ' . $userId, 'Info', 'custom');
+                }
+            }
+
+            if (!isset($_POST['ajax'])) {
+                $this->redirect(array('view', 'id' => $userId));
+            }
+        } else {
+            throw new CHttpException(400, Yii::t('AuthModule.main', 'Invalid request.'));
+        }
     }
 }

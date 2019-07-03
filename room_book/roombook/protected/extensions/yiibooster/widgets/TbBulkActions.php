@@ -18,10 +18,13 @@ Yii::import('bootstrap.widgets.TbButton');
 class TbBulkActions extends CComponent
 {
     /**
+     * @var integer the counter for generating implicit IDs.
+     */
+    private static $_counter = 0;
+    /**
      * @var TbGridView The grid view object that owns this column.
      */
     public $grid;
-
     /**
      * @var array the configuration for action displays.
      * Each array element specifies a single button
@@ -42,71 +45,38 @@ class TbBulkActions extends CComponent
      * be configured so that the corresponding button IDs appear as tokens in the template.
      */
     public $actionButtons = array();
-
     /**
      * @var array the checkbox column configuration
      */
     public $checkBoxColumnConfig = array();
-    
     /**
      * @var bool
      */
     public $selectableRows;
-	
-	/**
-	 * @var string
-	 */
+    /**
+     * @var string
+     */
     public $noCheckedMessage = 'No items are checked';
-
     /**
      * @var string
      */
     public $align = 'right';
-
-    /**
-     * @var integer the counter for generating implicit IDs.
-     */
-    private static $_counter = 0;
-
-    /**
-     * @var string id of the widget.
-     */
-    private $_id;
-
-    /**
-     *### .getId()
-     *
-     * Returns the ID of the widget or generates a new one if requested.
-     *
-     * @param boolean $autoGenerate whether to generate an ID if it is not set previously
-     *
-     * @return string id of the widget.
-     */
-    public function getId($autoGenerate = true)
-    {
-        if ($this->_id !== null) {
-            return $this->_id;
-        } else if ($autoGenerate) {
-            return $this->_id = 'egw' . self::$_counter++;
-        } else {
-	        return ''; // FIXME: why getId can sometimes return nothing?!
-        }
-    }
-
     /**
      * @var string the column name of the checkbox column
      */
     protected $columnName;
-
     /**
      * @var array the bulk action buttons
      */
     protected $buttons = array();
-
     /**
      * @var array the life events to attach the buttons to
      */
     protected $events = array();
+    /**
+     * @var string id of the widget.
+     */
+    private $_id;
 
     /**
      *### .__construct()
@@ -171,107 +141,6 @@ class TbBulkActions extends CComponent
     }
 
     /**
-     *### .initButtons()
-     *
-     * initializes the buttons to be render
-     */
-    public function initButtons()
-    {
-        if (empty($this->columnName) || empty($this->actionButtons))
-            return;
-
-	    $this->buttons = array();
-        foreach ($this->actionButtons as $action)
-	        $this->buttons[] = $this->convertToTbButtonConfig($action);
-    }
-
-    /**
-     *### .renderButtons()
-     *
-     * @return bool renders all initialized buttons
-     */
-    public function renderButtons()
-    {
-        if ($this->buttons === array())
-            return false;
-
-        echo CHtml::openTag(
-            'div',
-            array('id' => $this->getId(), 'style' => 'position:relative', 'class' => $this->align)
-        );
-
-        foreach ($this->buttons as $actionButton)
-            $this->renderButton($actionButton);
-
-        if (!$this->selectableRows)
-            echo '<div style="position:absolute;top:0;left:0;height:100%;width:100%;display:block;" class="bulk-actions-blocker"></div>';
-
-        echo CHtml::closeTag('div');
-
-        $this->registerClientScript();
-	    return true;
-    }
-
-    /**
-     *### .registerClientScript()
-     *
-     * Registers client script
-     */
-    public function registerClientScript()
-    {
-    	$id = $this->grid->id;
-        $js = '';
-        if(!$this->selectableRows)
-        {
-        	$js .= "$.fn.yiiGridView.initBulkActions('{$this->grid->id}');";
-		}
-        foreach ($this->events as $buttonId => $handler) {
-            $js .= "\n$(document).on('click','#{$buttonId}', function(){
-            var checked = $.fn.yiiGridView.getCheckedItems('$id');
-            if (!checked.length)
-            {
-                alert('".$this->noCheckedMessage."');
-                return false;
-            }
-			var fn = $handler; if ($.isFunction(fn)){fn(checked);}\nreturn false;});\n";
-        }
-        Yii::app()->getClientScript()->registerScript(__CLASS__ . '#' . $this->getId(), $js);
-    }
-
-    /**
-     *### .renderButton()
-     *
-     * Creates a TbButton and renders it
-     *
-     * @param array $actionButton the configuration to create the TbButton
-     */
-    protected function renderButton($actionButton)
-    {
-        // create widget and display
-        if (isset($actionButton['htmlOptions']['class']) && !$this->selectableRows)
-            $actionButton['htmlOptions']['class'] .= ' disabled bulk-actions-btn';
-        elseif (isset($actionButton['htmlOptions']['class']) && $this->selectableRows)
-            $actionButton['htmlOptions']['class'] .= 'bulk-actions-btn';
-        else
-            $actionButton['htmlOptions']['class'] = 'disabled bulk-actions-btn';
-            $action = null;
-
-        if (isset($actionButton['click'])) {
-            $action = CJavaScript::encode($actionButton['click']);
-            unset($actionButton['click']);
-        }
-
-        $button = Yii::createComponent($actionButton);
-        $button->init();
-        echo '&nbsp;';
-        $button->run();
-        echo '&nbsp;';
-        if ($action !== null) {
-            $this->events[$button->id] = $action;
-        }
-    }
-
-    /**
      *### .attachCheckBoxColumn()
      *
      * Adds a checkbox column to the grid. It is called when
@@ -318,37 +187,157 @@ class TbBulkActions extends CComponent
         $this->columnName = $this->grid->id . '_c0\[\]'; //
     }
 
-	/**
-	 * @param $action
-	 *
-	 * @return array
-	 * @throws CException
-	 */
-	private function convertToTbButtonConfig($action)
-	{
-		if (!isset($action['id'])) {
-			throw new CException(Yii::t(
-				'zii',
-				'Each bulk action button should have its "id" attribute set to ensure its functionality among ajax updates'
-			));
-		}
-		// button configuration is a regular TbButton
-		$buttonConfig = array(
-			'class' => 'bootstrap.widgets.TbButton',
-			'id' => $action['id'], // we must ensure this
-			'buttonType' => isset($action['buttonType']) ? $action['buttonType'] : TbButton::BUTTON_LINK,
-			'type' => isset($action['type']) ? $action['type'] : '',
-			'size' => isset($action['size']) ? $action['size'] : TbButton::SIZE_SMALL,
-			'icon' => isset($action['icon']) ? $action['icon'] : null,
-			'label' => isset($action['label']) ? $action['label'] : null,
-			'url' => isset($action['url']) ? $action['url'] : null,
-			'active' => isset($action['active']) ? $action['active'] : false,
-			'items' => isset($action['items']) ? $action['items'] : array(),
-			'ajaxOptions' => isset($action['ajaxOptions']) ? $action['ajaxOptions'] : array(),
-			'htmlOptions' => isset($action['htmlOptions']) ? $action['htmlOptions'] : array(),
-			'encodeLabel' => isset($action['encodeLabel']) ? $action['encodeLabel'] : true,
-			'click' => isset($action['click']) ? $action['click'] : false
-		);
-		return $buttonConfig;
-	}
+    /**
+     *### .initButtons()
+     *
+     * initializes the buttons to be render
+     */
+    public function initButtons()
+    {
+        if (empty($this->columnName) || empty($this->actionButtons))
+            return;
+
+        $this->buttons = array();
+        foreach ($this->actionButtons as $action)
+            $this->buttons[] = $this->convertToTbButtonConfig($action);
+    }
+
+    /**
+     * @param $action
+     *
+     * @return array
+     * @throws CException
+     */
+    private function convertToTbButtonConfig($action)
+    {
+        if (!isset($action['id'])) {
+            throw new CException(Yii::t(
+                'zii',
+                'Each bulk action button should have its "id" attribute set to ensure its functionality among ajax updates'
+            ));
+        }
+        // button configuration is a regular TbButton
+        $buttonConfig = array(
+            'class' => 'bootstrap.widgets.TbButton',
+            'id' => $action['id'], // we must ensure this
+            'buttonType' => isset($action['buttonType']) ? $action['buttonType'] : TbButton::BUTTON_LINK,
+            'type' => isset($action['type']) ? $action['type'] : '',
+            'size' => isset($action['size']) ? $action['size'] : TbButton::SIZE_SMALL,
+            'icon' => isset($action['icon']) ? $action['icon'] : null,
+            'label' => isset($action['label']) ? $action['label'] : null,
+            'url' => isset($action['url']) ? $action['url'] : null,
+            'active' => isset($action['active']) ? $action['active'] : false,
+            'items' => isset($action['items']) ? $action['items'] : array(),
+            'ajaxOptions' => isset($action['ajaxOptions']) ? $action['ajaxOptions'] : array(),
+            'htmlOptions' => isset($action['htmlOptions']) ? $action['htmlOptions'] : array(),
+            'encodeLabel' => isset($action['encodeLabel']) ? $action['encodeLabel'] : true,
+            'click' => isset($action['click']) ? $action['click'] : false
+        );
+        return $buttonConfig;
+    }
+
+    /**
+     *### .renderButtons()
+     *
+     * @return bool renders all initialized buttons
+     */
+    public function renderButtons()
+    {
+        if ($this->buttons === array())
+            return false;
+
+        echo CHtml::openTag(
+            'div',
+            array('id' => $this->getId(), 'style' => 'position:relative', 'class' => $this->align)
+        );
+
+        foreach ($this->buttons as $actionButton)
+            $this->renderButton($actionButton);
+
+        if (!$this->selectableRows)
+            echo '<div style="position:absolute;top:0;left:0;height:100%;width:100%;display:block;" class="bulk-actions-blocker"></div>';
+
+        echo CHtml::closeTag('div');
+
+        $this->registerClientScript();
+        return true;
+    }
+
+    /**
+     *### .getId()
+     *
+     * Returns the ID of the widget or generates a new one if requested.
+     *
+     * @param boolean $autoGenerate whether to generate an ID if it is not set previously
+     *
+     * @return string id of the widget.
+     */
+    public function getId($autoGenerate = true)
+    {
+        if ($this->_id !== null) {
+            return $this->_id;
+        } else if ($autoGenerate) {
+            return $this->_id = 'egw' . self::$_counter++;
+        } else {
+            return ''; // FIXME: why getId can sometimes return nothing?!
+        }
+    }
+
+    /**
+     *### .renderButton()
+     *
+     * Creates a TbButton and renders it
+     *
+     * @param array $actionButton the configuration to create the TbButton
+     */
+    protected function renderButton($actionButton)
+    {
+        // create widget and display
+        if (isset($actionButton['htmlOptions']['class']) && !$this->selectableRows)
+            $actionButton['htmlOptions']['class'] .= ' disabled bulk-actions-btn';
+        elseif (isset($actionButton['htmlOptions']['class']) && $this->selectableRows)
+            $actionButton['htmlOptions']['class'] .= 'bulk-actions-btn';
+        else
+            $actionButton['htmlOptions']['class'] = 'disabled bulk-actions-btn';
+        $action = null;
+
+        if (isset($actionButton['click'])) {
+            $action = CJavaScript::encode($actionButton['click']);
+            unset($actionButton['click']);
+        }
+
+        $button = Yii::createComponent($actionButton);
+        $button->init();
+        echo '&nbsp;';
+        $button->run();
+        echo '&nbsp;';
+        if ($action !== null) {
+            $this->events[$button->id] = $action;
+        }
+    }
+
+    /**
+     *### .registerClientScript()
+     *
+     * Registers client script
+     */
+    public function registerClientScript()
+    {
+        $id = $this->grid->id;
+        $js = '';
+        if (!$this->selectableRows) {
+            $js .= "$.fn.yiiGridView.initBulkActions('{$this->grid->id}');";
+        }
+        foreach ($this->events as $buttonId => $handler) {
+            $js .= "\n$(document).on('click','#{$buttonId}', function(){
+            var checked = $.fn.yiiGridView.getCheckedItems('$id');
+            if (!checked.length)
+            {
+                alert('" . $this->noCheckedMessage . "');
+                return false;
+            }
+			var fn = $handler; if ($.isFunction(fn)){fn(checked);}\nreturn false;});\n";
+        }
+        Yii::app()->getClientScript()->registerScript(__CLASS__ . '#' . $this->getId(), $js);
+    }
 }

@@ -7,13 +7,13 @@
         output = window.Markdown;
         Converter = output.Converter;
     }
-        
+
     output.getSanitizingConverter = function () {
         var converter = new Converter();
         converter.hooks.chain("postConversion", sanitizeHtml);
         converter.hooks.chain("postConversion", balanceTags);
         return converter;
-    }
+    };
 
     function sanitizeHtml(html) {
         return html.replace(/<[^>]*>?/gi, sanitizeTag);

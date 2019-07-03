@@ -8,13 +8,13 @@
 /**
  * @var $model Events
  */
-echo '<h2>'.$model->email.'</h2>';
+echo '<h2>' . $model->email . '</h2>';
 $this->widget('bootstrap.widgets.TbDetailView', array(
-    'data'=>$model,
-    'attributes'=>array(
+    'data' => $model,
+    'attributes' => array(
         array(
-            'name'=>'type',
-            'value'=>($model->type===1)?'Administrator':'User'
+            'name' => 'type',
+            'value' => ($model->type === 1) ? 'Administrator' : 'User'
         )
     ),
 ));

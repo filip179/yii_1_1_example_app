@@ -11,12 +11,47 @@
 class User extends CActiveRecord
 {
     /**
+     * @param $id
+     * @return string
+     */
+    public static function getEmailSpecific($id)
+    {
+        return User::model()->findByPk($id)->email;
+    }
+
+    /**
      * Returns the static model of the specified AR class.
      * @return static the static model class
      */
     public static function model($className = __CLASS__)
     {
         return parent::model($className);
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function getType()
+    {
+        return self::model()->findByPk(Yii::app()->user->getId())->type;
+    }
+
+    /**
+     * @return CActiveDataProvider
+     */
+    public static function findAllProvider()
+    {
+        $criteria = new CDbCriteria();
+        return new CActiveDataProvider(__CLASS__, array(
+            'criteria' => $criteria,
+            'pagination' => array(
+                'pageSize' => 20,
+                'itemCount' => sizeof($criteria),
+            ),
+            'sort' => array(
+                'defaultOrder' => 'email ASC',
+            )
+        ));
     }
 
     /**
@@ -84,40 +119,5 @@ class User extends CActiveRecord
     public function hashPassword($password)
     {
         return CPasswordHelper::hashPassword($password);
-    }
-
-    /**
-     * @param $id
-     * @return string
-     */
-    public static function getEmailSpecific($id)
-    {
-        return User::model()->findByPk($id)->email;
-    }
-
-    /**
-     * @return mixed
-     */
-    public static function getType()
-    {
-        return User::model()->findByPk(Yii::app()->user->getId())->type;
-    }
-
-    /**
-     * @return CActiveDataProvider
-     */
-    public static function findAllProvider()
-    {
-        $criteria = new CDbCriteria();
-        return new CActiveDataProvider(__CLASS__, array(
-            'criteria' => $criteria,
-            'pagination' => array(
-                'pageSize' => 20,
-                'itemCount' => sizeof($criteria),
-            ),
-            'sort' => array(
-                'defaultOrder' => 'email ASC',
-            )
-        ));
     }
 }

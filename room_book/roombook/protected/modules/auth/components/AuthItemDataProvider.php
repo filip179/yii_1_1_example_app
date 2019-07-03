@@ -20,15 +20,6 @@ class AuthItemDataProvider extends CDataProvider
     private $_items = array();
 
     /**
-     * Sets the authorization items.
-     * @param CAuthItem[] $authItems the items.
-     */
-    public function setAuthItems($authItems)
-    {
-        $this->_items = array_values($authItems);
-    }
-
-    /**
      * Fetches the data from the persistent data storage.
      * @return array list of data items
      */
@@ -40,6 +31,15 @@ class AuthItemDataProvider extends CDataProvider
         }
 
         return $this->_items;
+    }
+
+    /**
+     * Sets the authorization items.
+     * @param CAuthItem[] $authItems the items.
+     */
+    public function setAuthItems($authItems)
+    {
+        $this->_items = array_values($authItems);
     }
 
     /**

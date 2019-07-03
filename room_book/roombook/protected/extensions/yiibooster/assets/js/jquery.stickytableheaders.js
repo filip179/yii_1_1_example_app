@@ -9,7 +9,7 @@
         fixedOffset: 0
     };
 
-    function Plugin (el, options) {
+    function Plugin(el, options) {
         // To avoid scope issues, use 'base' instead of 'this'
         // to reference this class from internal events and functions.
         var base = this;
@@ -45,7 +45,7 @@
                 base.$clonedHeader = base.$originalHeader.clone();
 
                 // check whether the cloned header has filters
-                if($('tr.filters', base.$clonedHeader).length) {
+                if ($('tr.filters', base.$clonedHeader).length) {
                     // remove them, they will have to be added dynamically
                     $('tr.filters', base.$clonedHeader).remove();
                     $('th', base.$originalHeader).each(function (index) {
@@ -60,7 +60,7 @@
                     'top': 0,
                     'z-index': 1, // #18: opacity bug
                     'display': 'none',
-                    'background-color':'#fff'
+                    'background-color': '#fff'
                 });
 
                 base.$originalHeader.addClass('tableFloatingHeaderOriginal');
@@ -82,12 +82,12 @@
             base.bind();
         };
 
-        base.destroy = function (){
+        base.destroy = function () {
             base.$el.unbind('destroyed', base.teardown);
             base.teardown();
         };
 
-        base.teardown = function(){
+        base.teardown = function () {
             $.removeData(base.el, 'plugin_' + name);
             base.unbind();
 
@@ -99,14 +99,14 @@
             base.$el = null;
         };
 
-        base.bind = function(){
+        base.bind = function () {
             base.$window.on('scroll.' + name, base.toggleHeaders);
             base.$window.on('resize.' + name, base.toggleHeaders);
             base.$window.on('resize.' + name, base.updateWidth);
             // TODO: move tablesorter bindings here
         };
 
-        base.unbind = function(){
+        base.unbind = function () {
             // unbind window events by specifying handle so we don't remove too much
             base.$window.off('.' + name, base.toggleHeaders);
             base.$window.off('.' + name, base.updateWidth);
@@ -131,7 +131,7 @@
                         return;
                     }
                     filters = $('tr.filters', base.$originalHeader);
-                    if(filters.length) {
+                    if (filters.length) {
                         filters.insertAfter(base.$clonedHeader.children().eq(0));
                     }
                     base.$clonedHeader.css({
@@ -144,11 +144,10 @@
                     base.isCloneVisible = true;
                     base.leftOffset = newLeft;
                     base.topOffset = newTopOffset;
-                }
-                else if (base.isCloneVisible) {
+                } else if (base.isCloneVisible) {
                     filters = $('tr.filters', base.$clonedHeader);
                     base.$clonedHeader.css('display', 'none');
-                    if(filters.length) {
+                    if (filters.length) {
                         filters.insertAfter(base.$originalHeader.children().eq(0));
                     }
                     base.$originalHeader.css('visibility', 'visible');
@@ -176,15 +175,15 @@
 
     // A plugin wrapper around the constructor,
     // preventing against multiple instantiations
-    $.fn[name] = function ( options ) {
+    $.fn[name] = function (options) {
         return this.each(function () {
             var instance = $.data(this, 'plugin_' + name);
             if (instance) {
                 if (typeof options === "string") {
                     instance[options].apply(instance);
                 }
-            } else if(options !== 'destroy') {
-                $.data(this, 'plugin_' + name, new Plugin( this, options ));
+            } else if (options !== 'destroy') {
+                $.data(this, 'plugin_' + name, new Plugin(this, options));
             }
         });
     };

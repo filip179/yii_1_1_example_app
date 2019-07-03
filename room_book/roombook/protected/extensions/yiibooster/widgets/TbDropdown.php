@@ -19,89 +19,89 @@ Yii::import('bootstrap.widgets.TbBaseMenu');
  */
 class TbDropdown extends TbBaseMenu
 {
-	/**
-	 *### .init()
-	 *
-	 * Initializes the widget.
-	 */
-	public function init()
-	{
-		parent::init();
+    /**
+     *### .init()
+     *
+     * Initializes the widget.
+     */
+    public function init()
+    {
+        parent::init();
 
-		if (isset($this->htmlOptions['class'])) {
-			$this->htmlOptions['class'] .= ' dropdown-menu';
-		} else {
-			$this->htmlOptions['class'] = 'dropdown-menu';
-		}
-	}
+        if (isset($this->htmlOptions['class'])) {
+            $this->htmlOptions['class'] .= ' dropdown-menu';
+        } else {
+            $this->htmlOptions['class'] = 'dropdown-menu';
+        }
+    }
 
-	/**
-	 *### .renderMenuItem()
-	 *
-	 * Renders the content of a menu item.
-	 * Note that the container and the sub-menus are not rendered here.
-	 *
-	 * @param array $item the menu item to be rendered. Please see {@link items} on what data might be in the item.
-	 *
-	 * @return string the rendered item
-	 */
-	protected function renderMenuItem($item)
-	{
-		if (isset($item['icon'])) {
-			if (strpos($item['icon'], 'icon') === false && strpos($item['icon'], 'fa') === false) {
-				$item['icon'] = 'icon-' . implode(' icon-', explode(' ', $item['icon']));
-			}
+    /**
+     *### .getDividerCssClass()
+     *
+     * Returns the divider CSS class.
+     * @return string the class name
+     */
+    public function getDividerCssClass()
+    {
+        return 'divider';
+    }
 
-			$item['label'] = '<i class="' . $item['icon'] . '"></i> ' . $item['label'];
-		}
+    /**
+     *### .getDropdownCssClass()
+     *
+     * Returns the dropdown css class.
+     * @return string the class name
+     */
+    public function getDropdownCssClass()
+    {
+        return 'dropdown-submenu';
+    }
 
-		if (!isset($item['linkOptions'])) {
-			$item['linkOptions'] = array();
-		}
+    /**
+     *### .isVertical()
+     *
+     * Returns whether this is a vertical menu.
+     * @return boolean the result
+     */
+    public function isVertical()
+    {
+        return true;
+    }
 
-		if (isset($item['items']) && !empty($item['items']) && empty($item['url'])) {
-			$item['url'] = '#';
-		}
+    /**
+     *### .renderMenuItem()
+     *
+     * Renders the content of a menu item.
+     * Note that the container and the sub-menus are not rendered here.
+     *
+     * @param array $item the menu item to be rendered. Please see {@link items} on what data might be in the item.
+     *
+     * @return string the rendered item
+     */
+    protected function renderMenuItem($item)
+    {
+        if (isset($item['icon'])) {
+            if (strpos($item['icon'], 'icon') === false && strpos($item['icon'], 'fa') === false) {
+                $item['icon'] = 'icon-' . implode(' icon-', explode(' ', $item['icon']));
+            }
 
-		$item['linkOptions']['tabindex'] = -1;
+            $item['label'] = '<i class="' . $item['icon'] . '"></i> ' . $item['label'];
+        }
 
-		if (isset($item['url'])) {
-			return CHtml::link($item['label'], $item['url'], $item['linkOptions']);
-		} else {
-			return $item['label'];
-		}
-	}
+        if (!isset($item['linkOptions'])) {
+            $item['linkOptions'] = array();
+        }
 
-	/**
-	 *### .getDividerCssClass()
-	 *
-	 * Returns the divider CSS class.
-	 * @return string the class name
-	 */
-	public function getDividerCssClass()
-	{
-		return 'divider';
-	}
+        if (isset($item['items']) && !empty($item['items']) && empty($item['url'])) {
+            $item['url'] = '#';
+        }
 
-	/**
-	 *### .getDropdownCssClass()
-	 *
-	 * Returns the dropdown css class.
-	 * @return string the class name
-	 */
-	public function getDropdownCssClass()
-	{
-		return 'dropdown-submenu';
-	}
+        $item['linkOptions']['tabindex'] = -1;
 
-	/**
-	 *### .isVertical()
-	 *
-	 * Returns whether this is a vertical menu.
-	 * @return boolean the result
-	 */
-	public function isVertical()
-	{
-		return true;
-	}
+        if (isset($item['url'])) {
+            return CHtml::link($item['label'], $item['url'], $item['linkOptions']);
+        } else {
+            return $item['label'];
+        }
+    }
 }

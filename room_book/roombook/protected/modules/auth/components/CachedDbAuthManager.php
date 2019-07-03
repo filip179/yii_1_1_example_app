@@ -42,7 +42,7 @@ class CachedDbAuthManager extends CDbAuthManager implements ICachedAuthManager
         $cacheKey = $this->resolveCacheKey($itemName, $userId);
         $key = serialize($params);
         if ($allowCaching && ($cache = $this->getCache()) !== null) {
-		
+
             if (($data = $cache->get($cacheKey)) !== false) {
                 $data = unserialize($data);
                 if (isset($data[$key])) {
@@ -60,21 +60,6 @@ class CachedDbAuthManager extends CDbAuthManager implements ICachedAuthManager
         }
 
         return $result;
-    }
-
-    /**
-     * Flushes the access cache for the specified user.
-     * @param string $itemName the name of the operation that need access check.
-     * @param integer $userId the user id.
-     * @return boolean whether access was flushed.
-     */
-    public function flushAccess($itemName, $userId)
-    {
-        if (($cache = $this->getCache()) !== null) {
-            $cacheKey = $this->resolveCacheKey($itemName, $userId);
-            return $cache->delete($cacheKey);
-        }
-        return false;
     }
 
     /**
@@ -96,5 +81,20 @@ class CachedDbAuthManager extends CDbAuthManager implements ICachedAuthManager
     protected function getCache()
     {
         return $this->cachingDuration > 0 && $this->cacheID !== false ? Yii::app()->getComponent($this->cacheID) : null;
+    }
+
+    /**
+     * Flushes the access cache for the specified user.
+     * @param string $itemName the name of the operation that need access check.
+     * @param integer $userId the user id.
+     * @return boolean whether access was flushed.
+     */
+    public function flushAccess($itemName, $userId)
+    {
+        if (($cache = $this->getCache()) !== null) {
+            $cacheKey = $this->resolveCacheKey($itemName, $userId);
+            return $cache->delete($cacheKey);
+        }
+        return false;
     }
 }

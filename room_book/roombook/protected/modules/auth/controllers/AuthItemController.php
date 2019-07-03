@@ -166,6 +166,67 @@ abstract class AuthItemController extends AuthController
     }
 
     /**
+     * Returns a list of possible children for the item with the given name.
+     * @param string $itemName name of the item.
+     * @return array the child options.
+     */
+    protected function getItemChildOptions($itemName)
+    {
+        $options = array();
+
+        /* @var $am CAuthManager|AuthBehavior */
+        $am = Yii::app()->getAuthManager();
+
+        $item = $am->getAuthItem($itemName);
+        if ($item instanceof CAuthItem) {
+            $exclude = $am->getAncestors($itemName);
+            $exclude[$itemName] = $item;
+            $exclude = array_merge($exclude, $item->getChildren());
+            $authItems = $am->getAuthItems();
+            $validChildTypes = $this->getValidChildTypes();
+
+            foreach ($authItems as $childName => $childItem) {
+                if (in_array($childItem->type, $validChildTypes) && !isset($exclude[$childName])) {
+                    $options[$this->capitalize(
+                        $this->getItemTypeText($childItem->type, true)
+                    )][$childName] = $childItem->description;
+                }
+            }
+        }
+
+        return $options;
+    }
+
+    /**
+     * Returns a list of the valid child types for the given type.
+     * @return array the valid types.
+     */
+    protected function getValidChildTypes()
+    {
+        $validTypes = array();
+
+        switch ($this->type) {
+            case CAuthItem::TYPE_OPERATION:
+                break;
+
+            case CAuthItem::TYPE_TASK:
+                $validTypes[] = CAuthItem::TYPE_OPERATION;
+                break;
+
+            case CAuthItem::TYPE_ROLE:
+                $validTypes[] = CAuthItem::TYPE_OPERATION;
+                $validTypes[] = CAuthItem::TYPE_TASK;
+                break;
+        }
+
+        if (!$this->module->strictMode) {
+            $validTypes[] = $this->type;
+        }
+
+        return $validTypes;
+    }
+
+    /**
      * Deletes the item with the given name.
      * @throws CHttpException if the item does not exist or if the request is invalid.
      */
@@ -233,67 +294,6 @@ abstract class AuthItemController extends AuthController
         }
 
         $this->redirect(array('view', 'name' => $itemName));
-    }
-
-    /**
-     * Returns a list of possible children for the item with the given name.
-     * @param string $itemName name of the item.
-     * @return array the child options.
-     */
-    protected function getItemChildOptions($itemName)
-    {
-        $options = array();
-
-        /* @var $am CAuthManager|AuthBehavior */
-        $am = Yii::app()->getAuthManager();
-
-        $item = $am->getAuthItem($itemName);
-        if ($item instanceof CAuthItem) {
-            $exclude = $am->getAncestors($itemName);
-            $exclude[$itemName] = $item;
-            $exclude = array_merge($exclude, $item->getChildren());
-            $authItems = $am->getAuthItems();
-            $validChildTypes = $this->getValidChildTypes();
-
-            foreach ($authItems as $childName => $childItem) {
-                if (in_array($childItem->type, $validChildTypes) && !isset($exclude[$childName])) {
-                    $options[$this->capitalize(
-                        $this->getItemTypeText($childItem->type, true)
-                    )][$childName] = $childItem->description;
-                }
-            }
-        }
-
-        return $options;
-    }
-
-    /**
-     * Returns a list of the valid child types for the given type.
-     * @return array the valid types.
-     */
-    protected function getValidChildTypes()
-    {
-        $validTypes = array();
-
-        switch ($this->type) {
-            case CAuthItem::TYPE_OPERATION:
-                break;
-
-            case CAuthItem::TYPE_TASK:
-                $validTypes[] = CAuthItem::TYPE_OPERATION;
-                break;
-
-            case CAuthItem::TYPE_ROLE:
-                $validTypes[] = CAuthItem::TYPE_OPERATION;
-                $validTypes[] = CAuthItem::TYPE_TASK;
-                break;
-        }
-
-        if (!$this->module->strictMode) {
-            $validTypes[] = $this->type;
-        }
-
-        return $validTypes;
     }
 
     /**

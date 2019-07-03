@@ -104,6 +104,22 @@ class AuthModule extends CWebModule
     }
 
     /**
+     * Returns the URL to the published assets folder.
+     * @return string the URL.
+     */
+    protected function getAssetsUrl()
+    {
+        if (isset($this->_assetsUrl)) {
+            return $this->_assetsUrl;
+        } else {
+            $assetsPath = Yii::getPathOfAlias('auth.assets');
+            $assetsUrl = Yii::app()->assetManager->publish($assetsPath, false, -1, $this->forceCopyAssets);
+
+            return $this->_assetsUrl = $assetsUrl;
+        }
+    }
+
+    /**
      * The pre-filter for controller actions.
      * @param CController $controller the controller.
      * @param CAction $action the action.
@@ -126,22 +142,6 @@ class AuthModule extends CWebModule
             }
         }
         throw new CHttpException(401, Yii::t('AuthModule.main', 'Access denied.'));
-    }
-
-    /**
-     * Returns the URL to the published assets folder.
-     * @return string the URL.
-     */
-    protected function getAssetsUrl()
-    {
-        if (isset($this->_assetsUrl)) {
-            return $this->_assetsUrl;
-        } else {
-            $assetsPath = Yii::getPathOfAlias('auth.assets');
-            $assetsUrl = Yii::app()->assetManager->publish($assetsPath, false, -1, $this->forceCopyAssets);
-
-            return $this->_assetsUrl = $assetsUrl;
-        }
     }
 
     /**

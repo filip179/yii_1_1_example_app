@@ -1,5 +1,5 @@
 var bootstrapDatePicker;
 
 (function ($) {
-	bootstrapDatePicker = $.fn.datepicker;
+    bootstrapDatePicker = $.fn.datepicker;
 })(jQuery);

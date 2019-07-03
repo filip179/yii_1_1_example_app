@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A class to render Diffs in different formats.
  *
@@ -14,7 +15,8 @@
  *
  * @package Text_Diff
  */
-class Text_Diff_Renderer {
+class Text_Diff_Renderer
+{
 
     /**
      * Number of leading context "lines" to preserve.
@@ -65,7 +67,7 @@ class Text_Diff_Renderer {
     /**
      * Renders a diff.
      *
-     * @param Text_Diff $diff  A Text_Diff object.
+     * @param Text_Diff $diff A Text_Diff object.
      *
      * @return string  The formatted output.
      */
@@ -104,8 +106,8 @@ class Text_Diff_Renderer {
                         }
                         /* @todo */
                         $output .= $this->_block($x0, $ntrail + $xi - $x0,
-                                                 $y0, $ntrail + $yi - $y0,
-                                                 $block);
+                            $y0, $ntrail + $yi - $y0,
+                            $block);
                         $block = false;
                     }
                 }
@@ -136,11 +138,16 @@ class Text_Diff_Renderer {
 
         if (is_array($block)) {
             $output .= $this->_block($x0, $xi - $x0,
-                                     $y0, $yi - $y0,
-                                     $block);
+                $y0, $yi - $y0,
+                $block);
         }
 
         return $output . $this->_endDiff();
+    }
+
+    function _startDiff()
+    {
+        return '';
     }
 
     function _block($xbeg, $xlen, $ybeg, $ylen, &$edits)
@@ -149,35 +156,30 @@ class Text_Diff_Renderer {
 
         foreach ($edits as $edit) {
             switch (strtolower(get_class($edit))) {
-            case 'text_diff_op_copy':
-                $output .= $this->_context($edit->orig);
-                break;
+                case 'text_diff_op_copy':
+                    $output .= $this->_context($edit->orig);
+                    break;
 
-            case 'text_diff_op_add':
-                $output .= $this->_added($edit->final);
-                break;
+                case 'text_diff_op_add':
+                    $output .= $this->_added($edit->final);
+                    break;
 
-            case 'text_diff_op_delete':
-                $output .= $this->_deleted($edit->orig);
-                break;
+                case 'text_diff_op_delete':
+                    $output .= $this->_deleted($edit->orig);
+                    break;
 
-            case 'text_diff_op_change':
-                $output .= $this->_changed($edit->orig, $edit->final);
-                break;
+                case 'text_diff_op_change':
+                    $output .= $this->_changed($edit->orig, $edit->final);
+                    break;
             }
         }
 
         return $output . $this->_endBlock();
     }
 
-    function _startDiff()
+    function _startBlock($header)
     {
-        return '';
-    }
-
-    function _endDiff()
-    {
-        return '';
+        return $header . "\n";
     }
 
     function _blockHeader($xbeg, $xlen, $ybeg, $ylen)
@@ -199,24 +201,14 @@ class Text_Diff_Renderer {
         return $xbeg . ($xlen ? ($ylen ? 'c' : 'd') : 'a') . $ybeg;
     }
 
-    function _startBlock($header)
+    function _context($lines)
     {
-        return $header . "\n";
-    }
-
-    function _endBlock()
-    {
-        return '';
+        return $this->_lines($lines, '  ');
     }
 
     function _lines($lines, $prefix = ' ')
     {
         return $prefix . implode("\n$prefix", $lines) . "\n";
-    }
-
-    function _context($lines)
-    {
-        return $this->_lines($lines, '  ');
     }
 
     function _added($lines)
@@ -232,6 +224,16 @@ class Text_Diff_Renderer {
     function _changed($orig, $final)
     {
         return $this->_deleted($orig) . "---\n" . $this->_added($final);
+    }
+
+    function _endBlock()
+    {
+        return '';
+    }
+
+    function _endDiff()
+    {
+        return '';
     }
 
 }

@@ -14,12 +14,51 @@
 class Events extends CActiveRecord
 {
     /**
+     * Turns array of models into well formated EFullCalendar input array set
+     *
+     * @return array
+     */
+    public static function fetchAllForCalendar()
+    {
+        $result = array();
+        $events = self::model()->findAll();
+        foreach ($events as $event) {
+            $result[] = array(
+                'title' => $event->name . ' ' . Rooms::getNameSpecific($event->roomid),
+                'start' => $event->begin,
+                'end' => $event->end,
+                'allDay' => false,
+                'url' => Yii::app()->createAbsoluteUrl('/events/view/' . $event->id)
+            );
+        }
+        return $result;
+    }
+
+    /**
      * Returns the static model of the specified AR class.
      * @return static the static model class
      */
     public static function model($className = __CLASS__)
     {
         return parent::model($className);
+    }
+
+    /**
+     * @return CActiveDataProvider
+     */
+    public static function findAllProvider()
+    {
+        $criteria = new CDbCriteria();
+        return new CActiveDataProvider(__CLASS__, array(
+            'criteria' => $criteria,
+            'pagination' => array(
+                'pageSize' => 20,
+                'itemCount' => sizeof($criteria),
+            ),
+            'sort' => array(
+                'defaultOrder' => 'begin DESC',
+            )
+        ));
     }
 
     /**
@@ -75,16 +114,19 @@ class Events extends CActiveRecord
         );
     }
 
-    public function firstRoom($attribute, $params){
-        if (!isset($this->roomid)) {
-            $this->addError('roomid', 'First choose room.');
-            return false;
+    public function firstRoom()
+    {
+        if (isset($this->roomid)) {
+            return true;
         }
+
+        $this->addError('roomid', 'First choose room.');
+        return false;
     }
 
-    public function isThereEvent($attribute, $params)
+    public function isThereEvent($attribute)
     {
-        if (isset($this->$attribute) && isset($this->roomid)) {
+        if (isset($this->$attribute, $this->roomid)) {
             $sql = '  SELECT 
                     id
                   FROM 
@@ -94,57 +136,20 @@ class Events extends CActiveRecord
                     roomid = ' . $this->roomid;
 
             $result = Yii::app()->db->createCommand($sql)->query();
-            if (sizeof($result) > 0) {
+
+            if (count($result) > 0) {
                 $this->addError($attribute, 'There is an Event- change Room or ' . $attribute . ' time');
+
                 return false;
             }
         }
-    }
 
-    /**
-     * Turns array of models into well formated EFullCalendar input array set
-     *
-     * @return array
-     */
-    public static function fetchAllForCalendar()
-    {
-        $result = array();
-        $events = self::model()->findAll();
-        foreach ($events as $event) {
-            $result[] = array(
-                'title' => $event->name . ' ' . Rooms::getNameSpecific($event->roomid),
-                'start' => $event->begin,
-                'end' => $event->end,
-                'allDay' => false,
-                'url' => Yii::app()->createAbsoluteUrl('/events/view/' . $event->id)
-            );
-        }
-        return $result;
-    }
-
-    /**
-     * @return CActiveDataProvider
-     */
-    public static function findAllProvider()
-    {
-        $criteria = new CDbCriteria();
-        return new CActiveDataProvider(__CLASS__, array(
-            'criteria' => $criteria,
-            'pagination' => array(
-                'pageSize' => 20,
-                'itemCount' => sizeof($criteria),
-            ),
-            'sort' => array(
-                'defaultOrder' => 'begin DESC',
-            )
-        ));
+        return true;
     }
 
     public function isOwner()
     {
-        if ($this->userid === Yii::app()->user->getId())
-            return true;
-        return false;
+        return $this->userid === Yii::app()->user->getId();
     }
 
     /**

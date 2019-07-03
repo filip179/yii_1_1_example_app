@@ -13,29 +13,15 @@
 class TbArray
 {
     /**
-     * Returns a specific value from the given array (or the default value if not set).
-     * @param string $key the item key.
-     * @param array $array the array to get from.
-     * @param mixed $defaultValue the default value.
-     * @return mixed the value.
+     * Sets a set of default values for the given array.
+     * @param array $array the array to set values for.
+     * @param array $values the default values.
      */
-    public static function getValue($key, array $array, $defaultValue = null)
+    public static function defaultValues(array $values, array &$array)
     {
-        return isset($array[$key]) ? $array[$key] : $defaultValue;
-    }
-
-    /**
-     * Removes and returns a specific value from the given array (or the default value if not set).
-     * @param string $key the item key.
-     * @param array $array the array to pop the item from.
-     * @param mixed $defaultValue the default value.
-     * @return mixed the value.
-     */
-    public static function popValue($key, array &$array, $defaultValue = null)
-    {
-        $value = self::getValue($key, $array, $defaultValue);
-        unset($array[$key]);
-        return $value;
+        foreach ($values as $name => $value) {
+            self::defaultValue($name, $value, $array);
+        }
     }
 
     /**
@@ -48,18 +34,6 @@ class TbArray
     {
         if (!isset($array[$key])) {
             $array[$key] = $value;
-        }
-    }
-
-    /**
-     * Sets a set of default values for the given array.
-     * @param array $array the array to set values for.
-     * @param array $values the default values.
-     */
-    public static function defaultValues(array $values, array &$array)
-    {
-        foreach ($values as $name => $value) {
-            self::defaultValue($name, $value, $array);
         }
     }
 
@@ -103,6 +77,18 @@ class TbArray
     }
 
     /**
+     * Returns a specific value from the given array (or the default value if not set).
+     * @param string $key the item key.
+     * @param array $array the array to get from.
+     * @param mixed $defaultValue the default value.
+     * @return mixed the value.
+     */
+    public static function getValue($key, array $array, $defaultValue = null)
+    {
+        return isset($array[$key]) ? $array[$key] : $defaultValue;
+    }
+
+    /**
      * Moves the given values from one array to another.
      * @param array $keys the keys to move.
      * @param array $from the array to move from.
@@ -122,6 +108,20 @@ class TbArray
             }
         }
         return $to;
+    }
+
+    /**
+     * Removes and returns a specific value from the given array (or the default value if not set).
+     * @param string $key the item key.
+     * @param array $array the array to pop the item from.
+     * @param mixed $defaultValue the default value.
+     * @return mixed the value.
+     */
+    public static function popValue($key, array &$array, $defaultValue = null)
+    {
+        $value = self::getValue($key, $array, $defaultValue);
+        unset($array[$key]);
+        return $value;
     }
 
     /**

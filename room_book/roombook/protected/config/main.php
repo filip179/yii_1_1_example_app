@@ -6,23 +6,23 @@
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
 return array(
-	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'RoomBook',
+    'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
+    'name' => 'RoomBook',
 
-	// preloading 'log' component
-	'preload'=>array(
-	    'log',
+    // preloading 'log' component
+    'preload' => array(
+        'log',
         'bootstrap'
-        ),
-    'aliases' => array(
-        'bootstrap' => realpath( __DIR__ . '/../extensions/yiibooster' ),
     ),
-	// autoloading model and component classes
-	'import'=>array(
-		'application.models.*',
-		'application.components.*',
+    'aliases' => array(
+        'bootstrap' => realpath(__DIR__ . '/../extensions/yiibooster'),
+    ),
+    // autoloading model and component classes
+    'import' => array(
+        'application.models.*',
+        'application.components.*',
         'application.extensions.*',
-	),
+    ),
     'modules' => array(
         //'admin',
         // uncomment the following to enable the Gii tool
@@ -39,19 +39,19 @@ return array(
             // the layout used by the module.
             //'viewDir' => realpath(__DIR__ . '/../modules/auth/views/'), // the path to view files to use with this module.
         ),
-        'gii'=>array(
-            'class'=>'system.gii.GiiModule',
-            'password'=>'a',
-            'ipFilters'=>array('127.0.0.1', '::1'),
+        'gii' => array(
+            'class' => 'system.gii.GiiModule',
+            'password' => 'a',
+            'ipFilters' => array('127.0.0.1', '::1'),
             // 'newFileMode'=>0666,
             // 'newDirMode'=>0777,
         ),
     ),
 
-	'defaultController'=>'site/index',
+    'defaultController' => 'site/index',
 
-	// application components
-	'components'=>array(
+    // application components
+    'components' => array(
         'bootstrap' => array(
             'class' => 'bootstrap.components.Bootstrap',
         ),
@@ -59,8 +59,8 @@ return array(
         'user' => array(
             'allowAutoLogin' => true,
             'class' => 'auth.components.AuthWebUser',
-            'admins' => array( 'admin' ), // users with full access
-            'loginUrl' => array( '/site/login' ),
+            'admins' => array('admin'), // users with full access
+            'loginUrl' => array('/site/login'),
         ),
         'session' => array(
             'class' => 'CCacheHttpSession',
@@ -91,20 +91,20 @@ return array(
             'cleanGet' => TRUE,
         ),
 
-        'cache'=>array(
-            'class'=>'CDummyCache'
+        'cache' => array(
+            'class' => 'CDummyCache'
         ),
-		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=room_booker',
-			'emulatePrepare' => true,
-			'username' => 'root',
-			'password' => '',
-			'charset' => 'utf8'
-		),
-		'errorHandler'=>array(
-			// use 'site/error' action to display errors
-			'errorAction'=>'site/error',
-		),
+        'db' => array(
+            'connectionString' => 'mysql:host=localhost;dbname=room_booker',
+            'emulatePrepare' => true,
+            'username' => 'root',
+            'password' => '',
+            'charset' => 'utf8'
+        ),
+        'errorHandler' => array(
+            // use 'site/error' action to display errors
+            'errorAction' => 'site/error',
+        ),
         'urlManager' => array(
             'cacheID' => 'cache',
             'urlFormat' => 'path',
@@ -136,9 +136,9 @@ return array(
                 ),
             ),
         ),
-	),
+    ),
 
-	// application-level parameters that can be accessed
-	// using Yii::app()->params['paramName']
-	'params'=>require(dirname(__FILE__).'/params.php'),
+    // application-level parameters that can be accessed
+    // using Yii::app()->params['paramName']
+    'params' => require(dirname(__FILE__) . '/params.php'),
 );

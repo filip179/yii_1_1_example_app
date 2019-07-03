@@ -20,32 +20,32 @@ Yii::import('bootstrap.widgets.TbButtonColumn');
  */
 class TbJsonButtonColumn extends TbButtonColumn
 {
-	/**
-	 * Renders|returns the header cell.
-	 */
-	public function renderHeaderCell()
-	{
-		if ($this->grid->json) {
-			ob_start();
-			$this->renderHeaderCellContent();
-			$content = ob_get_contents();
-			ob_end_clean();
+    /**
+     * Renders|returns the header cell.
+     */
+    public function renderHeaderCell()
+    {
+        if ($this->grid->json) {
+            ob_start();
+            $this->renderHeaderCellContent();
+            $content = ob_get_contents();
+            ob_end_clean();
 
-			return array('id' => $this->id, 'content' => $content);
-		}
-		parent::renderHeaderCell();
-	}
+            return array('id' => $this->id, 'content' => $content);
+        }
+        parent::renderHeaderCell();
+    }
 
-	/**
-	 * Renders|returns the data cell
-	 *
-	 * @param int $row
-	 *
-	 * @return array|void
-	 */
-	public function renderDataCell($row)
-	{
-		if ($this->grid->json) {
+    /**
+     * Renders|returns the data cell
+     *
+     * @param int $row
+     *
+     * @return array|void
+     */
+    public function renderDataCell($row)
+    {
+        if ($this->grid->json) {
             $data = $this->grid->dataProvider->data[$row];
             $options = $this->htmlOptions;
             if ($this->cssClassExpression !== null) {
@@ -63,10 +63,10 @@ class TbJsonButtonColumn extends TbButtonColumn
                 'attrs' => CHtml::renderAttributes($options),
                 'content' => $this->renderDataCellContent($row, $data),
             );
-		}
+        }
 
-		parent::renderDataCell($row);
-	}
+        parent::renderDataCell($row);
+    }
 
     protected function renderDataCellContent($row, $data)
     {
@@ -82,18 +82,18 @@ class TbJsonButtonColumn extends TbButtonColumn
         echo $html;
     }
 
-	/**
-	 * Initializes the default buttons (view, update and delete).
-	 */
-	protected function initDefaultButtons()
-	{
-		parent::initDefaultButtons();
-		/**
-		 * add custom with msgbox instead
-		 */
-		$this->buttons['delete']['click'] = strtr(
-			$this->buttons['delete']['click'],
-			array('yiiGridView' => 'yiiJsonGridView')
-		);
-	}
+    /**
+     * Initializes the default buttons (view, update and delete).
+     */
+    protected function initDefaultButtons()
+    {
+        parent::initDefaultButtons();
+        /**
+         * add custom with msgbox instead
+         */
+        $this->buttons['delete']['click'] = strtr(
+            $this->buttons['delete']['click'],
+            array('yiiGridView' => 'yiiJsonGridView')
+        );
+    }
 }

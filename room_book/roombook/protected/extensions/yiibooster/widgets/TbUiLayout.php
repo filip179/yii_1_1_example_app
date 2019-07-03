@@ -74,9 +74,9 @@ class TbUiLayout extends CWidget
         $options = empty($options) ? '' : CJavaScript::encode($options);
 
         // Register global JS var
-        $cs->registerScript(__CLASS__ . '#jsVar#' . $this->getId(), 'var '.$this->jsVarName.';', CClientScript::POS_HEAD);
+        $cs->registerScript(__CLASS__ . '#jsVar#' . $this->getId(), 'var ' . $this->jsVarName . ';', CClientScript::POS_HEAD);
         // Register Layouts init script
-        $cs->registerScript(__CLASS__ . '#init#' . $this->getId(), $this->jsVarName.' = $("#'.$id.'").layout('.$options.');', CClientScript::POS_READY);
+        $cs->registerScript(__CLASS__ . '#init#' . $this->getId(), $this->jsVarName . ' = $("#' . $id . '").layout(' . $options . ');', CClientScript::POS_READY);
     }
 
     /**
@@ -127,7 +127,7 @@ class TbUiLayout extends CWidget
 
             // Print out
             echo CHtml::openTag('div', $htmlOptions);
-            echo $content.'</div>';
+            echo $content . '</div>';
         }
 
         return $layoutsOptions;

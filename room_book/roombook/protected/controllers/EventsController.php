@@ -26,6 +26,7 @@ class EventsController extends Controller
     public function actionView($id)
     {
         $model = Events::model()->findByPk($id);
+
         $this->render('view', array('model' => $model));
     }
 
@@ -37,14 +38,29 @@ class EventsController extends Controller
     {
         $model = new Events('create');
         $this->performAjaxValidation($model);
+
         if (isset($_POST['Events'])) {
             $model->attributes = $_POST['Events'];
             $this->performAjaxValidation($model);
+
             if ($model->save())
                 $this->redirect('/events/view/' . $model->id);
         }
-        $this->render('_form', array('model' => $model));
 
+        $this->render('_form', array('model' => $model));
+    }
+
+    /**
+     * Performs the AJAX validation.
+     *
+     * @param Events $model the model to be validated
+     */
+    protected function performAjaxValidation($model)
+    {
+        if (isset($_POST['ajax']) && $_POST['ajax'] === 'eventForm') {
+            echo CActiveForm::validate($model);
+            Yii::app()->end();
+        }
     }
 
     /**
@@ -55,16 +71,21 @@ class EventsController extends Controller
     public function actionUpdate($id)
     {
         $model = Events::model()->findByPk($id);
-        if ($model->isOwner() || User::getType() == 1) {
+
+        if ($model->isOwner() || User::getType() === 1) {
             if (isset($_POST['Events'])) {
                 $model->attributes = $_POST['Events'];
                 $this->performAjaxValidation($model);
-                if ($model->save())
+
+                if ($model->save()) {
                     $this->redirect('/events/view/' . $model->id);
+                }
             }
+
             $this->render('_form', array('model' => $model));
-        } else
+        } else {
             $this->redirect('/events/index');
+        }
     }
 
     /**
@@ -77,7 +98,7 @@ class EventsController extends Controller
     {
         $model = Events::model()->findByPk($id);
 
-        if ($model->isOwner() || User::getType() == 1) {
+        if ($model->isOwner() || User::getType() === 1) {
             $model->delete();
             $this->redirect('/events/index');
         } else {
@@ -91,19 +112,5 @@ class EventsController extends Controller
     public function actionIndex()
     {
         $this->render('index', array('provider' => Events::findAllProvider()));
-    }
-
-
-    /**
-     * Performs the AJAX validation.
-     *
-     * @param Events $model the model to be validated
-     */
-    protected function performAjaxValidation($model)
-    {
-        if (isset($_POST['ajax']) && $_POST['ajax'] === 'eventForm') {
-            echo CActiveForm::validate($model);
-            Yii::app()->end();
-        }
     }
 }

@@ -28,56 +28,26 @@ abstract class AuthController extends CController
     public function init()
     {
         parent::init();
-		//$this->layout = 'main'; 
-		$this->layout = $this->module->defaultLayout;
-$this->menu=array(
-	array('label'=>'Użytkownicy','url'=>array('user/admin')),
-	array('label'=>'Grupy','url'=>array('grupa/admin')),
-	array('label'=>'Rodzaje','url'=>array('rodzaj/admin')),
-	array('label'=>'Rodzaje umów','url'=>array('rodzajeUmowy/admin')),
-	array('label'=>'Rodzaje zaświadczeń','url'=>array('rodzajZaswiadczenia/admin')),
-	array('label'=>'Słowniki','url'=>array('dictionariesAssignments/index')),
-	array('label'=>'Firmy','url'=>array('/firma/admin')),
-	array('label'=>'Uprawnienia','url'=>array('auth/assignment/index')),
-	array('label'=>'Konfiguracja','url'=>array('site/konfiguracja')),
-	array('label'=>'Kolejka Email','url'=>array('email/admin')),
-	array('label'=>'Import XML/RCP','url'=>array('importXML/admin')),
-	array('label'=>'Wynagrodzenia','url'=>array('place/admin')),
-	array('label'=>'Struktura','url'=>array('conf/struct')),
-	array('label'=>'Powiadomienia','url'=>array('conf/popup')),
-	array('label'=>'Bezpieczeństwo','url'=>array('conf/safety')),
+        //$this->layout = 'main';
+        $this->layout = $this->module->defaultLayout;
+        $this->menu = array(
+            array('label' => 'Użytkownicy', 'url' => array('user/admin')),
+            array('label' => 'Grupy', 'url' => array('grupa/admin')),
+            array('label' => 'Rodzaje', 'url' => array('rodzaj/admin')),
+            array('label' => 'Rodzaje umów', 'url' => array('rodzajeUmowy/admin')),
+            array('label' => 'Rodzaje zaświadczeń', 'url' => array('rodzajZaswiadczenia/admin')),
+            array('label' => 'Słowniki', 'url' => array('dictionariesAssignments/index')),
+            array('label' => 'Firmy', 'url' => array('/firma/admin')),
+            array('label' => 'Uprawnienia', 'url' => array('auth/assignment/index')),
+            array('label' => 'Konfiguracja', 'url' => array('site/konfiguracja')),
+            array('label' => 'Kolejka Email', 'url' => array('email/admin')),
+            array('label' => 'Import XML/RCP', 'url' => array('importXML/admin')),
+            array('label' => 'Wynagrodzenia', 'url' => array('place/admin')),
+            array('label' => 'Struktura', 'url' => array('conf/struct')),
+            array('label' => 'Powiadomienia', 'url' => array('conf/popup')),
+            array('label' => 'Bezpieczeństwo', 'url' => array('conf/safety')),
 
-	);
-    }
-
-    /**
-     * Returns the authorization item type as a string.
-     * @param string $type the item type (0=operation, 1=task, 2=role).
-     * @param boolean $plural whether to return the name in plural.
-     * @return string the text.
-     * @throws CException if the item type is invalid.
-     */
-    public function getItemTypeText($type, $plural = false)
-    {
-        // todo: change the default value for $plural to false.
-        $n = $plural ? 2 : 1;
-        switch ($type) {
-            case CAuthItem::TYPE_OPERATION:
-                $name = Yii::t('AuthModule.main', 'operation|operations', $n);
-                break;
-
-            case CAuthItem::TYPE_TASK:
-                $name = Yii::t('AuthModule.main', 'task|tasks', $n);
-                break;
-
-            case CAuthItem::TYPE_ROLE:
-                $name = Yii::t('AuthModule.main', 'role|roles', $n);
-                break;
-
-            default:
-                throw new CException('Auth item type "' . $type . '" is valid.');
-        }
-        return $name;
+        );
     }
 
     /**
@@ -109,23 +79,6 @@ $this->menu=array(
     }
 
     /**
-     * Capitalizes the first word in the given string.
-     * @param string $string the string to capitalize.
-     * @return string the capitalized string.
-     * @see http://stackoverflow.com/questions/2517947/ucfirst-function-for-multibyte-character-encodings
-     */
-    public function capitalize($string)
-    {
-        if (!extension_loaded('mbstring')) {
-            return ucfirst($string);
-        }
-
-        $encoding = Yii::app()->charset;
-        $firstChar = mb_strtoupper(mb_substr($string, 0, 1, $encoding), $encoding);
-        return $firstChar . mb_substr($string, 1, mb_strlen($string, $encoding) - 1, $encoding);
-    }
-
-    /**
      * Returns the sub menu configuration.
      * @return array the configuration.
      */
@@ -153,5 +106,52 @@ $this->menu=array(
                 'active' => $this instanceof OperationController,
             ),
         );
+    }
+
+    /**
+     * Capitalizes the first word in the given string.
+     * @param string $string the string to capitalize.
+     * @return string the capitalized string.
+     * @see http://stackoverflow.com/questions/2517947/ucfirst-function-for-multibyte-character-encodings
+     */
+    public function capitalize($string)
+    {
+        if (!extension_loaded('mbstring')) {
+            return ucfirst($string);
+        }
+
+        $encoding = Yii::app()->charset;
+        $firstChar = mb_strtoupper(mb_substr($string, 0, 1, $encoding), $encoding);
+        return $firstChar . mb_substr($string, 1, mb_strlen($string, $encoding) - 1, $encoding);
+    }
+
+    /**
+     * Returns the authorization item type as a string.
+     * @param string $type the item type (0=operation, 1=task, 2=role).
+     * @param boolean $plural whether to return the name in plural.
+     * @return string the text.
+     * @throws CException if the item type is invalid.
+     */
+    public function getItemTypeText($type, $plural = false)
+    {
+        // todo: change the default value for $plural to false.
+        $n = $plural ? 2 : 1;
+        switch ($type) {
+            case CAuthItem::TYPE_OPERATION:
+                $name = Yii::t('AuthModule.main', 'operation|operations', $n);
+                break;
+
+            case CAuthItem::TYPE_TASK:
+                $name = Yii::t('AuthModule.main', 'task|tasks', $n);
+                break;
+
+            case CAuthItem::TYPE_ROLE:
+                $name = Yii::t('AuthModule.main', 'role|roles', $n);
+                break;
+
+            default:
+                throw new CException('Auth item type "' . $type . '" is valid.');
+        }
+        return $name;
     }
 }

@@ -9,18 +9,18 @@
  * @var $model Events
  * @var $provider CActiveDataProvider
  */
-echo '<h2>'.$model->name.'</h2>';
+echo '<h2>' . $model->name . '</h2>';
 $this->widget('bootstrap.widgets.TbDetailView', array(
-    'data'=>$model,
-    'attributes'=>array(
+    'data' => $model,
+    'attributes' => array(
         'capacity',
         array(
-            'name'=>'multimedia',
-            'value'=>($model->multimedia===1)?'Yes':'No'
+            'name' => 'multimedia',
+            'value' => ($model->multimedia === 1) ? 'Yes' : 'No'
         )
     ),
 )); ?>
-<h3><br/>Room equipment</h3>
+    <h3><br/>Room equipment</h3>
 <?php
 $gridColumns = array(
     'name',

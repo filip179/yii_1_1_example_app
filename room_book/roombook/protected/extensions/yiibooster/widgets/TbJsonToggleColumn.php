@@ -15,44 +15,44 @@ Yii::import('bootstrap.widgets.TbToggleColumn');
  */
 class TbJsonToggleColumn extends TbToggleColumn
 {
-	
-	/**
-	 * Renders the data cell content.
-	 * This method renders the view, update and toggle buttons in the data cell.
-	 *
-	 * @param integer $row the row number (zero-based)
-	 * @return array|void
-	 */
-	public function renderDataCell($row)
-	{
-		if ($this->grid->json) {
-			$data = $this->grid->dataProvider->data[$row];
-			$col = array();
-			ob_start();
-			$this->renderDataCellContent($row, $data);
-			$col['content'] = ob_get_contents();
-			ob_end_clean();
-			$col['attrs'] = '';
-			return $col;
 
-		}
+    /**
+     * Renders the data cell content.
+     * This method renders the view, update and toggle buttons in the data cell.
+     *
+     * @param integer $row the row number (zero-based)
+     * @return array|void
+     */
+    public function renderDataCell($row)
+    {
+        if ($this->grid->json) {
+            $data = $this->grid->dataProvider->data[$row];
+            $col = array();
+            ob_start();
+            $this->renderDataCellContent($row, $data);
+            $col['content'] = ob_get_contents();
+            ob_end_clean();
+            $col['attrs'] = '';
+            return $col;
 
-		parent::renderDataCell($row);
-	}
+        }
 
-	/**
-	 * Initializes the default toggle button.
-	 */
-	protected function initButton()
-	{
-		parent::initButton();
-		/**
-		 * add custom with msgbox instead
-		 */
-		$this->button['click'] = strtr(
-			$this->button['click'],
-			array('yiiGridView' => 'yiiJsonGridView')
-		);
-	}
-	
+        parent::renderDataCell($row);
+    }
+
+    /**
+     * Initializes the default toggle button.
+     */
+    protected function initButton()
+    {
+        parent::initButton();
+        /**
+         * add custom with msgbox instead
+         */
+        $this->button['click'] = strtr(
+            $this->button['click'],
+            array('yiiGridView' => 'yiiJsonGridView')
+        );
+    }
+
 }

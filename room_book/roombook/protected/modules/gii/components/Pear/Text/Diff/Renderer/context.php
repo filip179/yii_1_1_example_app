@@ -20,7 +20,8 @@ require_once 'Text/Diff/Renderer.php';
 /**
  * @package Text_Diff
  */
-class Text_Diff_Renderer_context extends Text_Diff_Renderer {
+class Text_Diff_Renderer_context extends Text_Diff_Renderer
+{
 
     /**
      * Number of leading context "lines" to preserve.

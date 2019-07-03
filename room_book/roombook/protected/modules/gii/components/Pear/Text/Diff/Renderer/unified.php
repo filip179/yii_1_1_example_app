@@ -21,7 +21,8 @@ require_once 'Text/Diff/Renderer.php';
 /**
  * @package Text_Diff
  */
-class Text_Diff_Renderer_unified extends Text_Diff_Renderer {
+class Text_Diff_Renderer_unified extends Text_Diff_Renderer
+{
 
     /**
      * Number of leading context "lines" to preserve.
@@ -49,9 +50,9 @@ class Text_Diff_Renderer_unified extends Text_Diff_Renderer {
         return $this->_lines($lines, ' ');
     }
 
-    function _added($lines)
+    function _changed($orig, $final)
     {
-        return $this->_lines($lines, '+');
+        return $this->_deleted($orig) . $this->_added($final);
     }
 
     function _deleted($lines)
@@ -59,9 +60,9 @@ class Text_Diff_Renderer_unified extends Text_Diff_Renderer {
         return $this->_lines($lines, '-');
     }
 
-    function _changed($orig, $final)
+    function _added($lines)
     {
-        return $this->_deleted($orig) . $this->_added($final);
+        return $this->_lines($lines, '+');
     }
 
 }

@@ -1,7 +1,11 @@
 {
     "name": "crisu83/yii-auth",
     "description": "Web UI for the authorization manager of Yii PHP framework.",
-    "keywords": ["yii", "authentication", "rbac"],
+    "keywords": [
+        "yii",
+        "authentication",
+        "rbac"
+    ],
     "type": "library",
     "license": "BSD-3-Clause",
     "authors": [

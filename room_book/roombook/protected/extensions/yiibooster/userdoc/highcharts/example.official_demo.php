@@ -9,14 +9,14 @@ $this->widget(
             ),
             'subtitle' => array(
                 'text' => 'Source: WorldClimate.com',
-                'x' -20
+                'x' - 20
             ),
             'xAxis' => array(
                 'categories' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
             ),
             'yAxis' => array(
                 'title' => array(
-                    'text' =>  'Temperature (°C)',
+                    'text' => 'Temperature (°C)',
                 ),
                 'plotLines' => [
                     [

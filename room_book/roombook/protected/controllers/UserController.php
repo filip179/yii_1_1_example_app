@@ -1,6 +1,6 @@
 <?php
 
-class userController extends Controller
+class UserController extends Controller
 {
     public $layout = 'column1';
 
@@ -10,8 +10,6 @@ class userController extends Controller
     public function actions()
     {
         return array(
-            // page action renders "static" pages stored under 'protected/views/site/pages'
-            // They can be accessed via: index.php?r=site/page&view=FileName
             'page' => array(
                 'class' => 'CViewAction',
             ),
@@ -34,6 +32,7 @@ class userController extends Controller
     public function actionView($id)
     {
         $model = User::model()->findByPk($id);
+
         $this->render('view', array('model' => $model));
     }
 
@@ -43,15 +42,21 @@ class userController extends Controller
      */
     public function actionCreate()
     {
-        if ( User::getType() == 1) {
+        if (User::getType() === 1) {
             $model = new User();
+
             if (isset($_POST['User'])) {
                 $model->attributes = $_POST['User'];
-                if ($model->save())
+
+                if ($model->save()) {
                     $this->redirect('/user/view/' . $model->id);
+                }
             }
+
             $this->render('_form', array('model' => $model));
-        } else throw new CHttpException(403);
+        } else {
+            throw new CHttpException(403);
+        }
 
     }
 
@@ -62,16 +67,21 @@ class userController extends Controller
      */
     public function actionUpdate($id)
     {
-        if (User::getType() == 1) {
+        if (User::getType() === 1) {
             $model = User::model()->findByPk($id);
+
             if (isset($_POST['User'])) {
                 $model->attributes = $_POST['User'];
-                if ($model->save())
+
+                if ($model->save()) {
                     $this->redirect('/user/view/' . $model->id);
+                }
             }
+
             $this->render('_form', array('model' => $model));
-        } else
+        } else {
             throw new CHttpException('403');
+        }
     }
 
     /**
@@ -81,11 +91,13 @@ class userController extends Controller
      */
     public function actionDelete($id)
     {
-        if (User::getType() == 1) {
+        if (User::getType() === 1) {
             $model = User::model()->findByPk($id);
             $model->delete();
+
             $this->redirect('/rooms/index');
-        } else
+        } else {
             throw new CHttpException('403');
+        }
     }
 }

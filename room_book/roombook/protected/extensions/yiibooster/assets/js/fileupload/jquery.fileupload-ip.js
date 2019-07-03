@@ -116,10 +116,10 @@
                 isXHRUpload = this._isXHRUpload(options);
             $.each(data.files, function (index, file) {
                 if (isXHRUpload && that._resizeSupport &&
-                        (options.resizeMaxWidth || options.resizeMaxHeight ||
-                            options.resizeMinWidth || options.resizeMinHeight) &&
-                        (resizeAll || file.size < options.resizeSourceMaxFileSize) &&
-                        options.resizeSourceFileTypes.test(file.type)) {
+                    (options.resizeMaxWidth || options.resizeMaxHeight ||
+                        options.resizeMinWidth || options.resizeMinHeight) &&
+                    (resizeAll || file.size < options.resizeSourceMaxFileSize) &&
+                    options.resizeSourceFileTypes.test(file.type)) {
                     that._processing += 1;
                     if (that._processing === 1) {
                         that.element.addClass('fileupload-processing');

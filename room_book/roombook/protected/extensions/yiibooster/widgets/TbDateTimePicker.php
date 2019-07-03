@@ -15,97 +15,97 @@
  */
 class TbDateTimePicker extends CInputWidget
 {
-	/**
-	 * @var TbActiveForm when created via TbActiveForm.
-	 * This attribute is set to the form that renders the widget
-	 * @see TbActionForm->inputRow
-	 */
-	public $form;
+    /**
+     * @var TbActiveForm when created via TbActiveForm.
+     * This attribute is set to the form that renders the widget
+     * @see TbActionForm->inputRow
+     */
+    public $form;
 
-	/**
-	 * @var array the options for the Bootstrap JavaScript plugin.
-	 */
-	public $options = array();
+    /**
+     * @var array the options for the Bootstrap JavaScript plugin.
+     */
+    public $options = array();
 
-	/**
-	 * @var string[] the JavaScript event handlers.
-	 */
-	public $events = array();
+    /**
+     * @var string[] the JavaScript event handlers.
+     */
+    public $events = array();
 
-	/**
-	 *### .init()
-	 *
-	 * Initializes the widget.
-	 */
-	public function init()
-	{
-		$this->htmlOptions['type'] = 'text';
-		$this->htmlOptions['autocomplete'] = 'off';
+    /**
+     *### .init()
+     *
+     * Initializes the widget.
+     */
+    public function init()
+    {
+        $this->htmlOptions['type'] = 'text';
+        $this->htmlOptions['autocomplete'] = 'off';
 
-		if (!isset($this->options['language'])) {
-			$this->options['language'] = substr(Yii::app()->getLanguage(), 0, 2);
-		}
+        if (!isset($this->options['language'])) {
+            $this->options['language'] = substr(Yii::app()->getLanguage(), 0, 2);
+        }
 
-	}
+    }
 
-	/**
-	 *### .run()
-	 *
-	 * Runs the widget.
-	 */
-	public function run()
-	{
-		list($name, $id) = $this->resolveNameID();
+    /**
+     *### .run()
+     *
+     * Runs the widget.
+     */
+    public function run()
+    {
+        list($name, $id) = $this->resolveNameID();
 
-		if ($this->hasModel()) {
-			if ($this->form) {
-				echo $this->form->textField($this->model, $this->attribute, $this->htmlOptions);
-			} else {
-				echo CHtml::activeTextField($this->model, $this->attribute, $this->htmlOptions);
-			}
+        if ($this->hasModel()) {
+            if ($this->form) {
+                echo $this->form->textField($this->model, $this->attribute, $this->htmlOptions);
+            } else {
+                echo CHtml::activeTextField($this->model, $this->attribute, $this->htmlOptions);
+            }
 
-		} else {
-			echo CHtml::textField($name, $this->value, $this->htmlOptions);
-		}
+        } else {
+            echo CHtml::textField($name, $this->value, $this->htmlOptions);
+        }
 
-		$this->registerClientScript();
-		$this->registerLanguageScript();
-		$options = !empty($this->options) ? CJavaScript::encode($this->options) : '';
+        $this->registerClientScript();
+        $this->registerLanguageScript();
+        $options = !empty($this->options) ? CJavaScript::encode($this->options) : '';
 
-		ob_start();
-		echo "jQuery('#{$id}').datetimepicker({$options})";
-		foreach ($this->events as $event => $handler) {
-			echo ".on('{$event}', " . CJavaScript::encode($handler) . ")";
-		}
+        ob_start();
+        echo "jQuery('#{$id}').datetimepicker({$options})";
+        foreach ($this->events as $event => $handler) {
+            echo ".on('{$event}', " . CJavaScript::encode($handler) . ")";
+        }
 
-		Yii::app()->getClientScript()->registerScript(__CLASS__ . '#' . $this->getId(), ob_get_clean() . ';');
+        Yii::app()->getClientScript()->registerScript(__CLASS__ . '#' . $this->getId(), ob_get_clean() . ';');
 
-	}
+    }
 
-	/**
-	 *### .registerClientScript()
-	 *
-	 * Registers required client script for bootstrap datepicker. It is not used through bootstrap->registerPlugin
-	 * in order to attach events if any
-	 */
-	public function registerClientScript()
-	{
+    /**
+     *### .registerClientScript()
+     *
+     * Registers required client script for bootstrap datepicker. It is not used through bootstrap->registerPlugin
+     * in order to attach events if any
+     */
+    public function registerClientScript()
+    {
         Bootstrap::getBooster()->registerPackage('datetimepicker');
-	}
+    }
 
-	public function registerLanguageScript()
-	{
-		if (isset($this->options['language']) && $this->options['language'] != 'en') {
-			$file = 'locales/bootstrap-datetimepicker.' . $this->options['language'] . '.js';
+    public function registerLanguageScript()
+    {
+        if (isset($this->options['language']) && $this->options['language'] != 'en') {
+            $file = 'locales/bootstrap-datetimepicker.' . $this->options['language'] . '.js';
             $booster = Bootstrap::getBooster();
-			if (@file_exists(Yii::getPathOfAlias('bootstrap.assets.bootstrap-datetimepicker') . '/js/' . $file)) {
-				if ($booster->enableCdn) {
-					// Not in CDN yet
+            if (@file_exists(Yii::getPathOfAlias('bootstrap.assets.bootstrap-datetimepicker') . '/js/' . $file)) {
+                if ($booster->enableCdn) {
+                    // Not in CDN yet
                     $booster->registerAssetJs('../bootstrap-datetimepicker/' . '/js/' . $file);
-				} else {
+                } else {
                     $booster->registerAssetJs('../bootstrap-datetimepicker/' . '/js/' . $file);
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 }

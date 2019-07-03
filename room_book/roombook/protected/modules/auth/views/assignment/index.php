@@ -13,13 +13,13 @@ $this->breadcrumbs = array(
 <?php $this->widget(
     'bootstrap.widgets.TbGridView',
     array(
-        'type' => 'striped hover',	
-		'filter' => $model,
-		'dataProvider' => $model->search(),    
-		'emptyText' => Yii::t('AuthModule.main', 'No assignments found.'),
-		'template'=>"{items}\n{pager}",
+        'type' => 'striped hover',
+        'filter' => $model,
+        'dataProvider' => $model->search(),
+        'emptyText' => Yii::t('AuthModule.main', 'No assignments found.'),
+        'template' => "{items}\n{pager}",
         //'dataProvider' => $dataProvider,
-		//'filter'=>$dataProvider,
+        //'filter'=>$dataProvider,
         //'emptyText' => Yii::t('AuthModule.main', 'No assignments found.'),
         //'template' => "{items}\n{pager}",
         'columns' => array(

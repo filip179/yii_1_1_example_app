@@ -1,4 +1,5 @@
 <?php
+
 /**
  * General API for generating and formatting diffs - the differences between
  * two sequences of strings.
@@ -17,7 +18,8 @@
  * @package Text_Diff
  * @author  Geoffrey T. Dairiki <dairiki@dairiki.org>
  */
-class Text_Diff {
+class Text_Diff
+{
 
     /**
      * Array of changes.
@@ -29,9 +31,9 @@ class Text_Diff {
     /**
      * Computes diffs between sequences of strings.
      *
-     * @param string $engine     Name of the diffing engine to use.  'auto'
+     * @param string $engine Name of the diffing engine to use.  'auto'
      *                           will automatically select the best.
-     * @param array $params      Parameters to pass to the diffing engine.
+     * @param array $params Parameters to pass to the diffing engine.
      *                           Normally an array of two arrays, each
      *                           containing the lines from a file.
      */
@@ -57,6 +59,18 @@ class Text_Diff {
     }
 
     /**
+     * Removes trailing newlines from a line of text. This is meant to be used
+     * with array_walk().
+     *
+     * @param string $line The line to trim.
+     * @param integer $key The index of the line in the array. Not used.
+     */
+    static function trimNewlines(&$line, $key)
+    {
+        $line = str_replace(array("\n", "\r"), '', $line);
+    }
+
+    /**
      * Returns the array of differences.
      */
     function getDiff()
@@ -67,10 +81,10 @@ class Text_Diff {
     /**
      * returns the number of new (added) lines in a given diff.
      *
-     * @since Text_Diff 1.1.0
+     * @return integer The number of new lines
      * @since Horde 3.2
      *
-     * @return integer The number of new lines
+     * @since Text_Diff 1.1.0
      */
     function countAddedLines()
     {
@@ -87,10 +101,10 @@ class Text_Diff {
     /**
      * Returns the number of deleted (removed) lines in a given diff.
      *
-     * @since Text_Diff 1.1.0
+     * @return integer The number of deleted lines
      * @since Horde 3.2
      *
-     * @return integer The number of deleted lines
+     * @since Text_Diff 1.1.0
      */
     function countDeletedLines()
     {
@@ -102,34 +116,6 @@ class Text_Diff {
             }
         }
         return $count;
-    }
-
-    /**
-     * Computes a reversed diff.
-     *
-     * Example:
-     * <code>
-     * $diff = new Text_Diff($lines1, $lines2);
-     * $rev = $diff->reverse();
-     * </code>
-     *
-     * @return Text_Diff  A Diff object representing the inverse of the
-     *                    original diff.  Note that we purposely don't return a
-     *                    reference here, since this essentially is a clone()
-     *                    method.
-     */
-    function reverse()
-    {
-        if (version_compare(zend_version(), '2', '>')) {
-            $rev = clone($this);
-        } else {
-            $rev = $this;
-        }
-        $rev->_edits = array();
-        foreach ($this->_edits as $edit) {
-            $rev->_edits[] = $edit->reverse();
-        }
-        return $rev;
     }
 
     /**
@@ -166,54 +152,6 @@ class Text_Diff {
     }
 
     /**
-     * Gets the original set of lines.
-     *
-     * This reconstructs the $from_lines parameter passed to the constructor.
-     *
-     * @return array  The original sequence of strings.
-     */
-    function getOriginal()
-    {
-        $lines = array();
-        foreach ($this->_edits as $edit) {
-            if ($edit->orig) {
-                array_splice($lines, count($lines), 0, $edit->orig);
-            }
-        }
-        return $lines;
-    }
-
-    /**
-     * Gets the final set of lines.
-     *
-     * This reconstructs the $to_lines parameter passed to the constructor.
-     *
-     * @return array  The sequence of strings.
-     */
-    function getFinal()
-    {
-        $lines = array();
-        foreach ($this->_edits as $edit) {
-            if ($edit->final) {
-                array_splice($lines, count($lines), 0, $edit->final);
-            }
-        }
-        return $lines;
-    }
-
-    /**
-     * Removes trailing newlines from a line of text. This is meant to be used
-     * with array_walk().
-     *
-     * @param string $line  The line to trim.
-     * @param integer $key  The index of the line in the array. Not used.
-     */
-    static function trimNewlines(&$line, $key)
-    {
-        $line = str_replace(array("\n", "\r"), '', $line);
-    }
-
-    /**
      * Determines the location of the system temporary directory.
      *
      * @static
@@ -226,7 +164,7 @@ class Text_Diff {
     function _getTempDir()
     {
         $tmp_locations = array('/tmp', '/var/tmp', 'c:\WUTemp', 'c:\temp',
-                               'c:\windows\temp', 'c:\winnt\temp');
+            'c:\windows\temp', 'c:\winnt\temp');
 
         /* Try PHP's upload_tmp_dir directive. */
         $tmp = ini_get('upload_tmp_dir');
@@ -283,13 +221,78 @@ class Text_Diff {
         return true;
     }
 
+    /**
+     * Gets the original set of lines.
+     *
+     * This reconstructs the $from_lines parameter passed to the constructor.
+     *
+     * @return array  The original sequence of strings.
+     */
+    function getOriginal()
+    {
+        $lines = array();
+        foreach ($this->_edits as $edit) {
+            if ($edit->orig) {
+                array_splice($lines, count($lines), 0, $edit->orig);
+            }
+        }
+        return $lines;
+    }
+
+    /**
+     * Gets the final set of lines.
+     *
+     * This reconstructs the $to_lines parameter passed to the constructor.
+     *
+     * @return array  The sequence of strings.
+     */
+    function getFinal()
+    {
+        $lines = array();
+        foreach ($this->_edits as $edit) {
+            if ($edit->final) {
+                array_splice($lines, count($lines), 0, $edit->final);
+            }
+        }
+        return $lines;
+    }
+
+    /**
+     * Computes a reversed diff.
+     *
+     * Example:
+     * <code>
+     * $diff = new Text_Diff($lines1, $lines2);
+     * $rev = $diff->reverse();
+     * </code>
+     *
+     * @return Text_Diff  A Diff object representing the inverse of the
+     *                    original diff.  Note that we purposely don't return a
+     *                    reference here, since this essentially is a clone()
+     *                    method.
+     */
+    function reverse()
+    {
+        if (version_compare(zend_version(), '2', '>')) {
+            $rev = clone($this);
+        } else {
+            $rev = $this;
+        }
+        $rev->_edits = array();
+        foreach ($this->_edits as $edit) {
+            $rev->_edits[] = $edit->reverse();
+        }
+        return $rev;
+    }
+
 }
 
 /**
  * @package Text_Diff
  * @author  Geoffrey T. Dairiki <dairiki@dairiki.org>
  */
-class Text_MappedDiff extends Text_Diff {
+class Text_MappedDiff extends Text_Diff
+{
 
     /**
      * Computes a diff between sequences of strings.
@@ -297,18 +300,18 @@ class Text_MappedDiff extends Text_Diff {
      * This can be used to compute things like case-insensitive diffs, or diffs
      * which ignore changes in white-space.
      *
-     * @param array $from_lines         An array of strings.
-     * @param array $to_lines           An array of strings.
-     * @param array $mapped_from_lines  This array should have the same size
+     * @param array $from_lines An array of strings.
+     * @param array $to_lines An array of strings.
+     * @param array $mapped_from_lines This array should have the same size
      *                                  number of elements as $from_lines.  The
      *                                  elements in $mapped_from_lines and
      *                                  $mapped_to_lines are what is actually
      *                                  compared when computing the diff.
-     * @param array $mapped_to_lines    This array should have the same number
+     * @param array $mapped_to_lines This array should have the same number
      *                                  of elements as $to_lines.
      */
     function __construct($from_lines, $to_lines,
-                             $mapped_from_lines, $mapped_to_lines)
+                         $mapped_from_lines, $mapped_to_lines)
     {
         assert(count($from_lines) == count($mapped_from_lines));
         assert(count($to_lines) == count($mapped_to_lines));
@@ -339,7 +342,8 @@ class Text_MappedDiff extends Text_Diff {
  *
  * @access private
  */
-class Text_Diff_Op {
+class Text_Diff_Op
+{
 
     var $orig;
     var $final;
@@ -367,7 +371,8 @@ class Text_Diff_Op {
  *
  * @access private
  */
-class Text_Diff_Op_copy extends Text_Diff_Op {
+class Text_Diff_Op_copy extends Text_Diff_Op
+{
 
     function __construct($orig, $final = false)
     {
@@ -392,7 +397,8 @@ class Text_Diff_Op_copy extends Text_Diff_Op {
  *
  * @access private
  */
-class Text_Diff_Op_delete extends Text_Diff_Op {
+class Text_Diff_Op_delete extends Text_Diff_Op
+{
 
     function __construct($lines)
     {
@@ -414,7 +420,8 @@ class Text_Diff_Op_delete extends Text_Diff_Op {
  *
  * @access private
  */
-class Text_Diff_Op_add extends Text_Diff_Op {
+class Text_Diff_Op_add extends Text_Diff_Op
+{
 
     function __construct($lines)
     {
@@ -436,7 +443,8 @@ class Text_Diff_Op_add extends Text_Diff_Op {
  *
  * @access private
  */
-class Text_Diff_Op_change extends Text_Diff_Op {
+class Text_Diff_Op_change extends Text_Diff_Op
+{
 
     function __construct($orig, $final)
     {

@@ -12,7 +12,7 @@
 
 $gridColumns = array(
     array('name' => 'email'),
-    array('name' => 'type','value' => '($data->type===1)?\'Administrator\':\'User\''),
+    array('name' => 'type', 'value' => '($data->type===1)?\'Administrator\':\'User\''),
     array(
         'htmlOptions' => array('nowrap' => 'nowrap'),
         'class' => 'bootstrap.widgets.TbButtonColumn',

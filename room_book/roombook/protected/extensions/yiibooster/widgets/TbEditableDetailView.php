@@ -15,19 +15,28 @@ Yii::import('bootstrap.widgets.TbDetailView');
  * EditableDetailView widget makes editable CDetailView (several attributes of single model shown as name-value table).
  *
  * @package booster.widgets.editable
-*/
+ */
 class TbEditableDetailView extends TbDetailView
 {
 
-	/**
-	 *### .init()
-	 *
-	 * Widget initialization
-	 */
-	public function init()
-	{
-		if (!$this->data instanceof CModel)
-			throw new CException('Property "data" should be of CModel class.');
+    /** Data for default fields of EditableField */
+    private $_data = array();
+    /** Valid attributes for EditableField (singleton) */
+    private $_editableProperties;
+
+    //***************************************************************************************
+    // Generic getter/setter implementation to accept default configuration for EditableField
+    //***************************************************************************************
+
+    /**
+     *### .init()
+     *
+     * Widget initialization
+     */
+    public function init()
+    {
+        if (!$this->data instanceof CModel)
+            throw new CException('Property "data" should be of CModel class.');
 
         if (!is_array($this->htmlOptions)) {
             $this->htmlOptions = array();
@@ -41,113 +50,104 @@ class TbEditableDetailView extends TbDetailView
             $this->htmlOptions['class'] .= ' ' . $defaultClasses;
         }
 
-		$this->cssFile = false;
+        $this->cssFile = false;
 
-		parent::init();
-	}
+        parent::init();
+    }
 
-	/**
-	 *### .renderItem()
-	 */
-	protected function renderItem($options, $templateData)
-	{
-		//apply editable if not set 'editable' params or set and not false
-		$apply = !empty($options['name']) && (!isset($options['editable']) || $options['editable'] !== false);
+    /**
+     * (non-PHPdoc)
+     * @see CComponent::__get()
+     */
+    public function __get($key)
+    {
+        return (array_key_exists($key, $this->_data) ? $this->_data[$key] : parent::__get($key));
+    }
 
-		if ($apply) {
-			//ensure $options['editable'] is array
-			if (!isset($options['editable'])) {
-				$options['editable'] = array();
-			}
+    /**
+     * (non-PHPdoc)
+     * @see CComponent::__set()
+     */
+    public function __set($key, $value)
+    {
+        if (in_array($key, $this->getEditableProperties())) {
+            $this->_data[$key] = $value;
+        } else {
+            parent::__set($key, $value);
+        }
+    }
 
-			//merge options with defaults: url, params, etc.
-			$options['editable'] = CMap::mergeArray($this->_data, $options['editable']);
+    /**
+     * Get the properties available for {@link EditableField}.
+     *
+     * These properties can also be set for the {@link EditableDetailView} as default values.
+     */
+    private function getEditableProperties()
+    {
+        if (!isset($this->_editableProperties)) {
+            $reflection = new ReflectionClass('TbEditableField');
+            $this->_editableProperties = array_map(
+                function ($d) {
+                    /** @var ReflectionProperty $d */
+                    return $d->getName();
+                },
+                $reflection->getProperties()
+            );
+        }
+        return $this->_editableProperties;
+    }
 
-			//options to be passed into EditableField (constructed from $options['editable'])
-			$widgetOptions = array(
-				'model' => $this->data,
-				'attribute' => $options['name']
-			);
+    /**
+     * (non-PHPdoc)
+     * @see CComponent::__isset()
+     */
+    public function __isset($name)
+    {
+        return array_key_exists($name, $this->_data) || parent::__isset($name);
+    }
 
-			//if value in detailview options provided, set text directly (as value here means text)
-			if (isset($options['value']) && $options['value'] !== null) {
-				$widgetOptions['text'] = $templateData['{value}'];
-				$widgetOptions['encode'] = false;
-			}
+    /**
+     *### .renderItem()
+     */
+    protected function renderItem($options, $templateData)
+    {
+        //apply editable if not set 'editable' params or set and not false
+        $apply = !empty($options['name']) && (!isset($options['editable']) || $options['editable'] !== false);
 
-			$widgetOptions = CMap::mergeArray($widgetOptions, $options['editable']);
-			/** @var $widget TbEditableField */
-			$widget = $this->controller->createWidget('TbEditableField', $widgetOptions);
+        if ($apply) {
+            //ensure $options['editable'] is array
+            if (!isset($options['editable'])) {
+                $options['editable'] = array();
+            }
 
-			//'apply' maybe changed during init of widget (e.g. if related model has unsafe attribute)
-			if ($widget->apply) {
-				ob_start();
-				$widget->run();
-				$templateData['{value}'] = ob_get_clean();
-			}
-		}
+            //merge options with defaults: url, params, etc.
+            $options['editable'] = CMap::mergeArray($this->_data, $options['editable']);
 
-		parent::renderItem($options, $templateData);
-	}
+            //options to be passed into EditableField (constructed from $options['editable'])
+            $widgetOptions = array(
+                'model' => $this->data,
+                'attribute' => $options['name']
+            );
 
-	//***************************************************************************************
-	// Generic getter/setter implementation to accept default configuration for EditableField
-	//***************************************************************************************
+            //if value in detailview options provided, set text directly (as value here means text)
+            if (isset($options['value']) && $options['value'] !== null) {
+                $widgetOptions['text'] = $templateData['{value}'];
+                $widgetOptions['encode'] = false;
+            }
 
-	/** Data for default fields of EditableField */
-	private $_data = array();
-	/** Valid attributes for EditableField (singleton) */
-	private $_editableProperties;
+            $widgetOptions = CMap::mergeArray($widgetOptions, $options['editable']);
+            /** @var $widget TbEditableField */
+            $widget = $this->controller->createWidget('TbEditableField', $widgetOptions);
 
-	/**
-	 * Get the properties available for {@link EditableField}.
-	 *
-	 * These properties can also be set for the {@link EditableDetailView} as default values.
-	 */
-	private function getEditableProperties()
-	{
-		if (!isset($this->_editableProperties)) {
-			$reflection = new ReflectionClass('TbEditableField');
-			$this->_editableProperties = array_map(
-				function ($d) {
-					/** @var ReflectionProperty $d */
-					return $d->getName();
-				},
-				$reflection->getProperties()
-			);
-		}
-		return $this->_editableProperties;
-	}
+            //'apply' maybe changed during init of widget (e.g. if related model has unsafe attribute)
+            if ($widget->apply) {
+                ob_start();
+                $widget->run();
+                $templateData['{value}'] = ob_get_clean();
+            }
+        }
 
-	/**
-	 * (non-PHPdoc)
-	 * @see CComponent::__get()
-	 */
-	public function __get($key)
-	{
-		return (array_key_exists($key, $this->_data) ? $this->_data[$key] : parent::__get($key));
-	}
-
-	/**
-	 * (non-PHPdoc)
-	 * @see CComponent::__set()
-	 */
-	public function __set($key, $value)
-	{
-		if (in_array($key, $this->getEditableProperties())) {
-			$this->_data[$key] = $value;
-		} else {
-			parent::__set($key, $value);
-		}
-	}
-
-	/**
-	 * (non-PHPdoc)
-	 * @see CComponent::__isset()
-	 */
-	public function __isset($name)
-	{
-		return array_key_exists($name, $this->_data) || parent::__isset($name);
-	}
+        parent::renderItem($options, $templateData);
+    }
 }
 

@@ -22,15 +22,15 @@ $form = $this->beginWidget(
     )
 );
 ?>
-<script type="application/javascript">
-    function isEmptyData(data){
-        for(var i in data){
-            if(data.hasOwnProperty(i))
-                return false;
+    <script type="application/javascript">
+        function isEmptyData(data) {
+            for (var i in data) {
+                if (data.hasOwnProperty(i))
+                    return false;
+            }
+            return true;
         }
-        return true;
-    }
-</script>
+    </script>
     <legend>Event</legend>
 <?php
 echo $form->dropDownListRow(
@@ -52,7 +52,7 @@ echo $form->dateTimePickerRow(
     $model,
     'end'
 );
- ?>
+?>
     <div class="form-actions">
         <?php $this->widget(
             'bootstrap.widgets.TbButton',
@@ -65,7 +65,7 @@ echo $form->dateTimePickerRow(
         ); ?>
         <?php $this->widget(
             'bootstrap.widgets.TbButton',
-            array('buttonType' => 'reset', 'label' => 'Reset' )
+            array('buttonType' => 'reset', 'label' => 'Reset')
         ); ?>
     </div>
 <?php

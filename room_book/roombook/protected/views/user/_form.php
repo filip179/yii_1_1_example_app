@@ -17,7 +17,7 @@ $form = $this->beginWidget(
     )
 );
 ?>
-<legend>User</legend>
+    <legend>User</legend>
 
 <?php echo $form->textFieldRow(
     $model,
@@ -26,23 +26,23 @@ $form = $this->beginWidget(
 echo $form->dropDownListRow(
     $model,
     'type',
-    array(0=>'User', 1=>'Administrator'),
-    array('empty'=>'Pick role..')
+    array(0 => 'User', 1 => 'Administrator'),
+    array('empty' => 'Pick role..')
 ); ?>
-<div class="form-actions">
-    <?php $this->widget(
-        'bootstrap.widgets.TbButton',
-        array(
-            'buttonType' => 'submit',
-            'type' => 'primary',
-            'label' => 'Submit'
-        )
-    ); ?>
-    <?php $this->widget(
-        'bootstrap.widgets.TbButton',
-        array('buttonType' => 'reset', 'label' => 'Reset')
-    ); ?>
-</div>
+    <div class="form-actions">
+        <?php $this->widget(
+            'bootstrap.widgets.TbButton',
+            array(
+                'buttonType' => 'submit',
+                'type' => 'primary',
+                'label' => 'Submit'
+            )
+        ); ?>
+        <?php $this->widget(
+            'bootstrap.widgets.TbButton',
+            array('buttonType' => 'reset', 'label' => 'Reset')
+        ); ?>
+    </div>
 <?php
 $this->endWidget();
 unset($form);
