@@ -1,12 +1,6 @@
 <h2>Events</h2>
 <?php
 /**
- * Created by PhpStorm.
- * User: fzyminkowski
- * Date: 2017-06-10
- * Time: 00:31
- */
-/**
  * @var $provider CActiveDataProvider
  */
 

@@ -71,6 +71,7 @@ class EventsController extends Controller
      * Deletes specific model
      *
      * @param $id
+     * @throws CDbException
      */
     public function actionDelete($id)
     {
@@ -82,7 +83,6 @@ class EventsController extends Controller
         } else {
             $this->redirect('/events/index');
         }
-
     }
 
     /**

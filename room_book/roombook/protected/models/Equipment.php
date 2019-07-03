@@ -1,5 +1,8 @@
 <?php
 
+use Events;
+
+
 /**
  * The followings are the available columns in table 'tbl_user':
  * @property int $id
@@ -7,7 +10,7 @@
  * @property int $codename
  * @property bool $name
  */
-class Equipment extends CActiveRecord
+class Equipment extends CActiveRecord, Events
 {
 	/**
 	 * Returns the static model of the specified AR class.
